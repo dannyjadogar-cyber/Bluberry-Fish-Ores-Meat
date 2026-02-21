@@ -5,195 +5,129 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Meat Division | Calculator</title>
     <style>
-        /* Premium Meat Theme CSS */
+        /* --- ANIMATIONS --- */
+        @keyframes fade-in-up {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes total-pulse {
+            0% { transform: scale(1); color: inherit; }
+            50% { transform: scale(1.1); color: #e74c3c; }
+            100% { transform: scale(1); color: inherit; }
+        }
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #fdfaf9; /* Very light, warm off-white */
+            background-color: #fdfaf9;
             color: #333;
             display: flex;
             flex-direction: column;
             align-items: center;
             padding: 30px 15px;
             margin: 0;
+            overflow-x: hidden;
         }
 
-        .header-container {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        h1 {
-            color: #7a1a1a; /* Deep Burgundy Red */
-            margin: 0 0 10px 0;
-            font-size: 2.5rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
-
-        p.subtitle {
-            color: #666;
-            margin: 0;
-            font-size: 1.1rem;
-        }
-
-        /* Table Styling */
-        table {
-            background-color: white;
-            border-collapse: collapse;
+        .animated-container {
             width: 100%;
             max-width: 700px;
-            box-shadow: 0px 8px 16px rgba(122, 26, 26, 0.1);
-            border-radius: 8px;
-            overflow: hidden; /* Keeps the rounded corners neat */
-            margin-bottom: 25px;
-        }
-
-        th, td {
-            padding: 12px 15px;
-            text-align: center;
-            border-bottom: 1px solid #eee;
-        }
-
-        th {
-            background-color: #7a1a1a; /* Burgundy header */
-            color: white;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-size: 0.95rem;
-        }
-
-        /* Highlight the input column subtly */
-        td.amount-col {
-            background-color: #faf5f5; 
-        }
-
-        /* Input Fields */
-        input[type="number"] {
-            width: 70px;
-            padding: 8px;
-            text-align: center;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            font-size: 1rem;
-            transition: border-color 0.3s;
-        }
-
-        input[type="number"]:focus {
-            outline: none;
-            border-color: #7a1a1a;
-            box-shadow: 0 0 5px rgba(122, 26, 26, 0.3);
-        }
-
-        input[type=number]::-webkit-inner-spin-button, 
-        input[type=number]::-webkit-outer-spin-button { 
-            -webkit-appearance: none; 
-            margin: 0; 
-        }
-
-        /* Total Row Styling */
-        .total-row {
-            background-color: #222; /* Dark Charcoal */
-            color: white;
-            font-size: 1.2rem;
-            font-weight: bold;
-        }
-
-        .total-row td {
-            border: none;
-            padding: 15px;
-        }
-
-        #grand-total {
-            background-color: #fff;
-            color: #7a1a1a; /* Grand total in bold red */
-            font-size: 1.3rem;
-        }
-
-        /* Buttons */
-        .button-group {
             display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
-            justify-content: center;
+            flex-direction: column;
+            align-items: center;
+            animation: fade-in-up 0.6s ease-out forwards;
         }
 
+        .header-container { text-align: center; margin-bottom: 30px; }
+        h1 { color: #7a1a1a; margin: 0 0 5px 0; font-size: 2.5rem; text-transform: uppercase; letter-spacing: 2px; }
+        p.subtitle { color: #666; margin: 0; font-size: 1.1rem; }
+
+        table {
+            background-color: white; border-collapse: collapse; width: 100%;
+            box-shadow: 0px 8px 20px rgba(122, 26, 26, 0.08); border-radius: 8px;
+            overflow: hidden; margin-bottom: 25px;
+        }
+        th, td { padding: 12px 15px; text-align: center; border-bottom: 1px solid #eee; }
+        th { background-color: #7a1a1a; color: white; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+        
+        /* Row Hover Animation */
+        tbody tr { transition: all 0.2s ease; }
+        tbody tr:hover {
+            background-color: #fcf4f4;
+            transform: scale(1.01);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            position: relative;
+            z-index: 10;
+        }
+
+        td.amount-col { background-color: #faf5f5; transition: background-color 0.2s; }
+        tbody tr:hover td.amount-col { background-color: transparent; }
+
+        input[type="number"] {
+            width: 70px; padding: 8px; text-align: center; border: 1px solid #ccc;
+            border-radius: 4px; font-size: 1rem; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        input[type="number"]:focus {
+            outline: none; border-color: #7a1a1a; transform: scale(1.1);
+            box-shadow: 0 0 10px rgba(122, 26, 26, 0.2);
+        }
+        input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+
+        .total-row { background-color: #222; color: white; font-size: 1.2rem; font-weight: bold; }
+        .total-row td { border: none; padding: 15px; }
+        #grand-total {
+            background-color: #fff; color: #7a1a1a; font-size: 1.4rem;
+            transition: all 0.2s; display: inline-block;
+        }
+        .pulse-anim { animation: total-pulse 0.4s ease-out; }
+
+        .button-group { display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; }
         .btn {
-            padding: 12px 25px;
-            font-size: 1rem;
-            font-weight: bold;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: all 0.2s;
-            text-decoration: none;
+            padding: 12px 25px; font-size: 1rem; font-weight: bold; border: none;
+            border-radius: 5px; cursor: pointer; transition: all 0.2s; text-decoration: none;
         }
+        .btn-clear { background-color: #e74c3c; color: white; box-shadow: 0 4px 6px rgba(231, 76, 60, 0.2); }
+        .btn-clear:hover { background-color: #c0392b; transform: translateY(-2px); box-shadow: 0 6px 12px rgba(231, 76, 60, 0.3); }
+        .btn-clear:active { transform: translateY(1px); }
+        .btn-back { background-color: #444; color: white; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); }
+        .btn-back:hover { background-color: #222; transform: translateY(-2px); }
 
-        .btn-clear {
-            background-color: #e74c3c;
-            color: white;
-            box-shadow: 0 4px 6px rgba(231, 76, 60, 0.2);
-        }
-
-        .btn-clear:hover {
-            background-color: #c0392b;
-        }
-
-        .btn-back {
-            background-color: #444;
-            color: white;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-        }
-
-        .btn-back:hover {
-            background-color: #222;
-        }
-
-        /* Mobile Adjustments */
         @media (max-width: 500px) {
-            h1 { font-size: 2rem; }
-            th, td { padding: 10px 5px; font-size: 0.9rem; }
-            input[type="number"] { width: 50px; }
+            h1 { font-size: 2rem; } th, td { padding: 10px 5px; font-size: 0.9rem; } input[type="number"] { width: 50px; }
         }
     </style>
 </head>
 <body>
 
-    <div class="header-container">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#7a1a1a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 70px; height: 70px; margin-bottom: 10px;">
-            <path d="M12.5 2a6.5 6.5 0 0 0-6.22 4.6c-1.1 3.13-.78 3.9-3.18 6.08A3 3 0 0 0 5 18c4 0 8.4-1.8 11.4-4.3A6.5 6.5 0 0 0 12.5 2Z"/>
-            <path d="m18.5 6 2.19 3.42c.36.56.58 1.24.58 1.93v4.65"/>
-        </svg>
-        <h1>Premium Meat</h1>
-        <p class="subtitle">Order Calculation System</p>
-    </div>
+    <div class="animated-container">
+        <div class="header-container">
+            <img src="logo.jpg" alt="Bluberry Logo" style="height: 100px; margin-bottom: 10px; filter: drop-shadow(0px 4px 6px rgba(0,0,0,0.1));">
+            <h1>Premium Meat</h1>
+            <p class="subtitle">Order Calculation System</p>
+        </div>
 
-    <table>
-        <thead>
-            <tr>
-                <th>Item Name</th>
-                <th>Price</th>
-                <th>Amount</th>
-                <th>Row Total</th>
-            </tr>
-        </thead>
-        <tbody id="bill-body">
-            </tbody>
-        <tfoot>
-            <tr class="total-row">
-                <td colspan="3" style="text-align: right;">GRAND TOTAL</td>
-                <td id="grand-total">0</td>
-            </tr>
-        </tfoot>
-    </table>
+        <table>
+            <thead>
+                <tr>
+                    <th>Item Name</th> <th>Price</th> <th>Amount</th> <th>Row Total</th>
+                </tr>
+            </thead>
+            <tbody id="bill-body">
+                </tbody>
+            <tfoot>
+                <tr class="total-row">
+                    <td colspan="3" style="text-align: right;">GRAND TOTAL</td>
+                    <td style="background-color: white;"><span id="grand-total">0</span></td>
+                </tr>
+            </tfoot>
+        </table>
 
-    <div class="button-group">
-        <a href="index.html" class="btn btn-back">← Back to Home</a>
-        <button class="btn btn-clear" onclick="resetCalculator()">Clear Quantities</button>
+        <div class="button-group">
+            <a href="index.html" class="btn btn-back">← Back to Home</a>
+            <button class="btn btn-clear" onclick="resetCalculator()">Clear Quantities</button>
+        </div>
     </div>
 
     <script>
-// Check for saved prices from Admin, if none exist, use defaults
         const defaultMeatData = [
             { name: "Tuna", price: 120 }, { name: "Halibut", price: 255 }, { name: "Salmon", price: 299 },
             { name: "Swordfish", price: 311 }, { name: "Octopus", price: 314 }, { name: "Squid", price: 296 },
@@ -203,11 +137,10 @@
             { name: "Marlin", price: 12319 }, { name: "Deer", price: 1000 }
         ];
 
-        // This line links it to the Admin Panel!
+        // Link to Admin Panel data
         const meatData = JSON.parse(localStorage.getItem('meatPrices')) || defaultMeatData;
         const tbody = document.getElementById('bill-body');
 
-        // Calculate totals
         function calculateTotals() {
             let grandTotal = 0;
             const rows = tbody.querySelectorAll('tr');
@@ -222,19 +155,21 @@
                 grandTotal += rowTotal;
             });
             
-            document.getElementById('grand-total').textContent = grandTotal;
+            const gtElement = document.getElementById('grand-total');
+            if(gtElement.textContent != grandTotal) {
+                gtElement.textContent = grandTotal;
+                // Trigger the pulse animation
+                gtElement.classList.remove('pulse-anim');
+                void gtElement.offsetWidth; // forces reflow
+                gtElement.classList.add('pulse-anim');
+            }
         }
 
-        // Reset inputs
         function resetCalculator() {
-            const inputs = document.querySelectorAll('.amount-input');
-            inputs.forEach(input => {
-                input.value = ''; 
-            });
+            document.querySelectorAll('.amount-input').forEach(input => input.value = ''); 
             calculateTotals(); 
         }
 
-        // Generate rows automatically
         meatData.forEach((item) => {
             const tr = document.createElement('tr');
             tr.innerHTML = `
@@ -248,6 +183,5 @@
             tbody.appendChild(tr);
         });
     </script>
-
 </body>
 </html>

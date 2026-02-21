@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ore Division | Calculator</title>
+    <style>
+        /* Industrial Ore Theme CSS */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #ebedef; /* Cool metallic light gray */
+            color: #2c3e50;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 30px 15px;
+            margin: 0;
+        }
+
+        .header-container {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            color: #2c3e50; /* Deep Slate/Steel Blue */
+            margin: 0 0 10px 0;
+            font-size: 2.5rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        p.subtitle {
+            color: #5d6d7e;
+            margin: 0;
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        /* Table Styling */
+        table {
+            background-color: white;
+            border-collapse: collapse;
+            width: 100%;
+            max-width: 700px;
+            box-shadow: 0px 8px 16px rgba(44, 62, 80, 0.15);
+            border-radius: 8px;
+            overflow: hidden; 
+            margin-bottom: 25px;
+            border: 1px solid #d5d8dc;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: center;
+            border-bottom: 1px solid #eaeded;
+        }
+
+        th {
+            background-color: #2c3e50; /* Slate header */
+            color: #ecf0f1;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.95rem;
+        }
+
+        /* Highlight the input column subtly */
+        td.amount-col {
+            background-color: #f4f6f7; 
+        }
+
+        /* Input Fields */
+        input[type="number"] {
+            width: 70px;
+            padding: 8px;
+            text-align: center;
+            border: 2px solid #bdc3c7;
+            border-radius: 4px;
+            font-size: 1rem;
+            transition: all 0.3s;
+            background-color: #fff;
+            color: #2c3e50;
+            font-weight: bold;
+        }
+
+        input[type="number"]:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 5px rgba(52, 152, 219, 0.4);
+        }
+
+        input[type=number]::-webkit-inner-spin-button, 
+        input[type=number]::-webkit-outer-spin-button { 
+            -webkit-appearance: none; 
+            margin: 0; 
+        }
+
+        /* Total Row Styling */
+        .total-row {
+            background-color: #17202a; /* Almost Black/Deepest Slate */
+            color: white;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .total-row td {
+            border: none;
+            padding: 15px;
+        }
+
+        #grand-total {
+            background-color: #fff;
+            color: #2c3e50; 
+            font-size: 1.3rem;
+            border-top: 3px solid #17202a;
+        }
+
+        /* Buttons */
+        .button-group {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            font-size: 1rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-clear {
+            background-color: #e67e22; /* Warning Orange for clearing */
+            color: white;
+            box-shadow: 0 4px 6px rgba(230, 126, 34, 0.2);
+        }
+
+        .btn-clear:hover {
+            background-color: #d35400;
+        }
+
+        .btn-back {
+            background-color: #7f8c8d; /* Neutral Gray */
+            color: white;
+            box-shadow: 0 4px 6px rgba(127, 140, 141, 0.2);
+        }
+
+        .btn-back:hover {
+            background-color: #34495e;
+        }
+
+        /* Mobile Adjustments */
+        @media (max-width: 500px) {
+            h1 { font-size: 2rem; }
+            th, td { padding: 10px 5px; font-size: 0.9rem; }
+            input[type="number"] { width: 50px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header-container">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#2c3e50" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 70px; height: 70px; margin-bottom: 10px;">
+            <path d="M6 3h12l4 6-10 13L2 9Z"/>
+            <path d="M11 3 8 9l4 13"/>
+            <path d="M13 3l3 6-4 13"/>
+        </svg>
+        <h1>Industrial Ore</h1>
+        <p class="subtitle">Mining & Extraction Calculation System</p>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Ore Name</th>
+                <th>Price</th>
+                <th>Amount</th>
+                <th>Row Total</th>
+            </tr>
+        </thead>
+        <tbody id="bill-body">
+            </tbody>
+        <tfoot>
+            <tr class="total-row">
+                <td colspan="3" style="text-align: right;">GRAND TOTAL</td>
+                <td id="grand-total">0</td>
+            </tr>
+        </tfoot>
+    </table>
+
+    <div class="button-group">
+        <a href="index.html" class="btn btn-back">← Back to Home</a>
+        <button class="btn btn-clear" onclick="resetCalculator()">Clear Yields</button>
+    </div>
+
+    <script>
+// Check for saved prices from Admin, if none exist, use defaults
+        const defaultOreData = [
+            { name: "Coal", price: 425 },
+            { name: "Iron", price: 1280 },
+            { name: "Gold", price: 5240 },
+            { name: "Diamond", price: 20000 }
+        ];
+
+        // This line links it to the Admin Panel!
+        const oreData = JSON.parse(localStorage.getItem('orePrices')) || defaultOreData;
+        const tbody = document.getElementById('bill-body');
+
+        // Calculate totals
+        function calculateTotals() {
+            let grandTotal = 0;
+            const rows = tbody.querySelectorAll('tr');
+            
+            rows.forEach((row, index) => {
+                const price = oreData[index].price;
+                const amountInput = row.querySelector('.amount-input');
+                const amount = parseInt(amountInput.value) || 0; 
+                const rowTotal = price * amount;
+                
+                row.querySelector('.row-total').textContent = rowTotal;
+                grandTotal += rowTotal;
+            });
+            
+            document.getElementById('grand-total').textContent = grandTotal;
+        }
+
+        // Reset inputs
+        function resetCalculator() {
+            const inputs = document.querySelectorAll('.amount-input');
+            inputs.forEach(input => {
+                input.value = ''; 
+            });
+            calculateTotals(); 
+        }
+
+        // Generate rows automatically
+        oreData.forEach((item) => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td style="font-weight: 600; color: #2c3e50;">${item.name}</td>
+                <td>${item.price}</td>
+                <td class="amount-col">
+                    <input type="number" class="amount-input" min="0" placeholder="0" oninput="calculateTotals()">
+                </td>
+                <td class="row-total" style="font-weight: 600; color: #7f8c8d;">0</td>
+            `;
+            tbody.appendChild(tr);
+        });
+    </script>
+
+</body>
+</html>

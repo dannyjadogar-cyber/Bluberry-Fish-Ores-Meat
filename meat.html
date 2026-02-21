@@ -3,185 +3,161 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meat Division | Calculator</title>
+    <title>Meat & Ore Industries</title>
     <style>
-        /* --- ANIMATIONS --- */
-        @keyframes fade-in-up {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+        /* --- NEW ANIMATIONS --- */
+        @keyframes logo-drop {
+            0% { top: -150px; opacity: 0; }
+            100% { top: 20px; opacity: 1; }
         }
-        @keyframes total-pulse {
-            0% { transform: scale(1); color: inherit; }
-            50% { transform: scale(1.1); color: #e74c3c; }
-            100% { transform: scale(1); color: inherit; }
+        @keyframes logo-float {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(10px); }
+        }
+        @keyframes fade-slide-up {
+            0% { opacity: 0; transform: translateY(40px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes slide-in-bottom {
+            0% { transform: translateY(100%); }
+            100% { transform: translateY(0); }
+        }
+        @keyframes button-pulse {
+            0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.4); }
+            70% { box-shadow: 0 0 0 15px rgba(255, 255, 255, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
         }
 
-        body {
+        /* --- BASE STYLES --- */
+        body, html {
+            margin: 0; padding: 0;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #fdfaf9;
-            color: #333;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 30px 15px;
-            margin: 0;
-            overflow-x: hidden;
+            height: 100%; display: flex; flex-direction: column; overflow-x: hidden;
+            background-color: #111; /* Prevents white flashes during load */
         }
 
-        .animated-container {
-            width: 100%;
-            max-width: 700px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            animation: fade-in-up 0.6s ease-out forwards;
+        /* --- LOGO --- */
+        .main-logo-container {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 100;
+            /* Combines the drop-in animation with the infinite float */
+            animation: logo-drop 1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards, 
+                       logo-float 4s ease-in-out infinite 1s;
+        }
+        .main-logo {
+            height: 140px; 
+            filter: drop-shadow(0px 8px 15px rgba(0,0,0,0.8));
         }
 
-        .header-container { text-align: center; margin-bottom: 30px; }
-        h1 { color: #7a1a1a; margin: 0 0 5px 0; font-size: 2.5rem; text-transform: uppercase; letter-spacing: 2px; }
-        p.subtitle { color: #666; margin: 0; font-size: 1.1rem; }
-
-        table {
-            background-color: white; border-collapse: collapse; width: 100%;
-            box-shadow: 0px 8px 20px rgba(122, 26, 26, 0.08); border-radius: 8px;
-            overflow: hidden; margin-bottom: 25px;
+        /* --- SPLIT SCREEN --- */
+        .split-container {
+            display: flex; width: 100%; height: calc(100vh - 80px); 
         }
-        th, td { padding: 12px 15px; text-align: center; border-bottom: 1px solid #eee; }
-        th { background-color: #7a1a1a; color: white; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+        .split {
+            width: 50%; height: 100%;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            text-align: center; color: white; transition: width 0.6s cubic-bezier(0.25, 0.8, 0.25, 1); position: relative;
+        }
+        .split-container:hover .split { width: 40%; }
+        .split-container:hover .split:hover { width: 60%; }
+
+        .meat-side {
+            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.4)), url('https://images.unsplash.com/photo-1603048297172-c92544798d5e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80') center/cover;
+            background-color: #8b0000;
+        }
+        .ore-side {
+            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.4)), url('https://images.unsplash.com/photo-1587595431973-160d0d94add1?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80') center/cover;
+            background-color: #4a4a4a;
+        }
+
+        /* --- TEXT & BUTTON ANIMATIONS --- */
+        h1 { 
+            font-size: 3.5rem; margin-bottom: 10px; text-shadow: 2px 2px 4px rgba(0,0,0,0.7); margin-top: 0; 
+            opacity: 0;
+            animation: fade-slide-up 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+            animation-delay: 0.3s; /* Starts slightly after page load */
+        }
+        p.subtitle { 
+            font-size: 1.2rem; margin-bottom: 30px; text-shadow: 1px 1px 3px rgba(0,0,0,0.7); 
+            opacity: 0;
+            animation: fade-slide-up 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+            animation-delay: 0.5s;
+        }
+        .action-btn {
+            padding: 15px 40px; font-size: 1.2rem; font-weight: bold; color: white;
+            background-color: transparent; border: 3px solid white; border-radius: 5px;
+            cursor: pointer; transition: all 0.3s; text-decoration: none;
+            opacity: 0;
+            animation: fade-slide-up 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+            animation-delay: 0.7s;
+        }
+        .action-btn:hover { 
+            background-color: white; color: black; 
+            transform: translateY(-3px);
+            animation: button-pulse 1.5s infinite; /* Adds the glowing pulse */
+        }
+
+        /* --- TRUST SIGNALS --- */
+        .trust-signals {
+            height: 80px; background-color: #1a1a1a; color: #d1d1d1;
+            display: flex; justify-content: space-around; align-items: center;
+            font-size: 0.9rem; padding: 0 20px; text-transform: uppercase; letter-spacing: 1px;
+            transform: translateY(100%);
+            animation: slide-in-bottom 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+            animation-delay: 1s; /* Slides in last */
+            position: relative; z-index: 50;
+        }
+        .trust-item strong { color: white; }
         
-        /* Row Hover Animation */
-        tbody tr { transition: all 0.2s ease; }
-        tbody tr:hover {
-            background-color: #fcf4f4;
-            transform: scale(1.01);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-            position: relative;
-            z-index: 10;
+        /* Admin Link */
+        .admin-link-container {
+            text-align: center; padding: 10px; background: #0a0a0a;
+            position: relative; z-index: 50;
         }
 
-        td.amount-col { background-color: #faf5f5; transition: background-color 0.2s; }
-        tbody tr:hover td.amount-col { background-color: transparent; }
-
-        input[type="number"] {
-            width: 70px; padding: 8px; text-align: center; border: 1px solid #ccc;
-            border-radius: 4px; font-size: 1rem; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        input[type="number"]:focus {
-            outline: none; border-color: #7a1a1a; transform: scale(1.1);
-            box-shadow: 0 0 10px rgba(122, 26, 26, 0.2);
-        }
-        input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
-
-        .total-row { background-color: #222; color: white; font-size: 1.2rem; font-weight: bold; }
-        .total-row td { border: none; padding: 15px; }
-        #grand-total {
-            background-color: #fff; color: #7a1a1a; font-size: 1.4rem;
-            transition: all 0.2s; display: inline-block;
-        }
-        .pulse-anim { animation: total-pulse 0.4s ease-out; }
-
-        .button-group { display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; }
-        .btn {
-            padding: 12px 25px; font-size: 1rem; font-weight: bold; border: none;
-            border-radius: 5px; cursor: pointer; transition: all 0.2s; text-decoration: none;
-        }
-        .btn-clear { background-color: #e74c3c; color: white; box-shadow: 0 4px 6px rgba(231, 76, 60, 0.2); }
-        .btn-clear:hover { background-color: #c0392b; transform: translateY(-2px); box-shadow: 0 6px 12px rgba(231, 76, 60, 0.3); }
-        .btn-clear:active { transform: translateY(1px); }
-        .btn-back { background-color: #444; color: white; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); }
-        .btn-back:hover { background-color: #222; transform: translateY(-2px); }
-
-        @media (max-width: 500px) {
-            h1 { font-size: 2rem; } th, td { padding: 10px 5px; font-size: 0.9rem; } input[type="number"] { width: 50px; }
+        /* --- MOBILE DESIGN --- */
+        @media (max-width: 768px) {
+            .split-container { flex-direction: column; height: auto; min-height: calc(100vh - 80px); }
+            .split, .split-container:hover .split, .split-container:hover .split:hover {
+                width: 100% !important; height: 50vh; 
+            }
+            h1 { font-size: 2.5rem; }
+            .main-logo { height: 100px; }
+            .main-logo-container { animation: logo-drop 1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; } /* Disables float on mobile to save space */
+            .trust-signals { flex-direction: column; height: auto; padding: 15px; text-align: center; gap: 10px; }
         }
     </style>
 </head>
 <body>
 
-    <div class="animated-container">
-        <div class="header-container">
-            <img src="logo.jpg" alt="Bluberry Logo" style="height: 100px; margin-bottom: 10px; filter: drop-shadow(0px 4px 6px rgba(0,0,0,0.1));">
+    <div class="main-logo-container">
+        <img src="logo.jpg" alt="Bluberry Fish-Ores & Meat" class="main-logo">
+    </div>
+
+    <div class="split-container">
+        <div class="split meat-side">
             <h1>Premium Meat</h1>
-            <p class="subtitle">Order Calculation System</p>
+            <p class="subtitle">Ethically Sourced & Processed</p>
+            <a href="meat.html" class="action-btn">Enter Meat Division</a>
         </div>
 
-        <table>
-            <thead>
-                <tr>
-                    <th>Item Name</th> <th>Price</th> <th>Amount</th> <th>Row Total</th>
-                </tr>
-            </thead>
-            <tbody id="bill-body">
-                </tbody>
-            <tfoot>
-                <tr class="total-row">
-                    <td colspan="3" style="text-align: right;">GRAND TOTAL</td>
-                    <td style="background-color: white;"><span id="grand-total">0</span></td>
-                </tr>
-            </tfoot>
-        </table>
-
-        <div class="button-group">
-            <a href="index.html" class="btn btn-back">← Back to Home</a>
-            <button class="btn btn-clear" onclick="resetCalculator()">Clear Quantities</button>
+        <div class="split ore-side">
+            <h1>Industrial Ore</h1>
+            <p class="subtitle">High-Grade Mining Operations</p>
+            <a href="ore.html" class="action-btn">Enter Ore Division</a>
         </div>
     </div>
 
-    <script>
-        const defaultMeatData = [
-            { name: "Tuna", price: 120 }, { name: "Halibut", price: 255 }, { name: "Salmon", price: 299 },
-            { name: "Swordfish", price: 311 }, { name: "Octopus", price: 314 }, { name: "Squid", price: 296 },
-            { name: "Ray", price: 244 }, { name: "Sturgeon", price: 183 }, { name: "Bluefin Tuna", price: 596 },
-            { name: "Sea Turtle", price: 691 }, { name: "Atlantic Salmon", price: 541 }, 
-            { name: "Pacific Lamprey", price: 654 }, { name: "Steelhead Trout", price: 702 }, 
-            { name: "Marlin", price: 12319 }, { name: "Deer", price: 1000 }
-        ];
+    <div class="trust-signals">
+        <div class="trust-item"><strong>Meat Division:</strong> Certified Food Safety (HACCP)</div>
+        <div class="trust-item"><strong>Ore Division:</strong> ISO 9001 Certified | Licensed Operations</div>
+    </div>
+    
+    <div class="admin-link-container">
+        <a href="admin.html" style="color: #444; text-decoration: none; font-size: 0.8rem; transition: color 0.3s;" onmouseover="this.style.color='#aaa'" onmouseout="this.style.color='#444'">Admin Login</a>
+    </div>
 
-        // Link to Admin Panel data
-        const meatData = JSON.parse(localStorage.getItem('meatPrices')) || defaultMeatData;
-        const tbody = document.getElementById('bill-body');
-
-        function calculateTotals() {
-            let grandTotal = 0;
-            const rows = tbody.querySelectorAll('tr');
-            
-            rows.forEach((row, index) => {
-                const price = meatData[index].price;
-                const amountInput = row.querySelector('.amount-input');
-                const amount = parseInt(amountInput.value) || 0; 
-                const rowTotal = price * amount;
-                
-                row.querySelector('.row-total').textContent = rowTotal;
-                grandTotal += rowTotal;
-            });
-            
-            const gtElement = document.getElementById('grand-total');
-            if(gtElement.textContent != grandTotal) {
-                gtElement.textContent = grandTotal;
-                // Trigger the pulse animation
-                gtElement.classList.remove('pulse-anim');
-                void gtElement.offsetWidth; // forces reflow
-                gtElement.classList.add('pulse-anim');
-            }
-        }
-
-        function resetCalculator() {
-            document.querySelectorAll('.amount-input').forEach(input => input.value = ''); 
-            calculateTotals(); 
-        }
-
-        meatData.forEach((item) => {
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td style="font-weight: 500;">${item.name}</td>
-                <td>${item.price}</td>
-                <td class="amount-col">
-                    <input type="number" class="amount-input" min="0" placeholder="0" oninput="calculateTotals()">
-                </td>
-                <td class="row-total" style="font-weight: 600; color: #555;">0</td>
-            `;
-            tbody.appendChild(tr);
-        });
-    </script>
 </body>
 </html>

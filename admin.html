@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | Price Manager</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f6f9;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 30px 15px;
+        }
+        h1 { color: #2c3e50; }
+        .dashboard {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+            width: 100%;
+            max-width: 900px;
+        }
+        .panel {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            width: 350px;
+        }
+        .panel h2 {
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+            margin-top: 0;
+        }
+        .input-group {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        input[type="number"] {
+            width: 80px;
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .btn-save {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            margin-top: 20px;
+            background-color: #27ae60;
+            color: white;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .btn-save:hover { background-color: #219150; }
+        .success-msg {
+            color: #27ae60;
+            font-weight: bold;
+            margin-top: 15px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Price Management Dashboard</h1>
+    <p>Update prices here. They will automatically update on your calculators.</p>
+
+    <div class="dashboard">
+        <div class="panel" id="meat-panel">
+            <h2 style="color: #7a1a1a;">Meat & Fish Division</h2>
+            </div>
+
+        <div class="panel" id="ore-panel">
+            <h2 style="color: #2c3e50;">Ore Division</h2>
+            </div>
+    </div>
+
+    <button class="btn-save" onclick="savePrices()">💾 Save All Prices</button>
+    <div id="success" class="success-msg">Prices saved successfully!</div>
+
+    <br>
+    <a href="index.html" style="color: #555; text-decoration: none; font-weight: bold;">← Back to Home</a>
+
+    <script>
+        // 1. Define Default Prices (Fallback)
+        const defaultMeat = [
+            { name: "Tuna", price: 120 }, { name: "Halibut", price: 255 }, { name: "Salmon", price: 299 },
+            { name: "Swordfish", price: 311 }, { name: "Octopus", price: 314 }, { name: "Squid", price: 296 },
+            { name: "Ray", price: 244 }, { name: "Sturgeon", price: 183 }, { name: "Bluefin Tuna", price: 596 },
+            { name: "Sea Turtle", price: 691 }, { name: "Atlantic Salmon", price: 541 }, 
+            { name: "Pacific Lamprey", price: 654 }, { name: "Steelhead Trout", price: 702 }, 
+            { name: "Marlin", price: 12319 }, { name: "Deer", price: 1000 }
+        ];
+
+        const defaultOre = [
+            { name: "Coal", price: 425 }, { name: "Iron", price: 1280 }, 
+            { name: "Gold", price: 5240 }, { name: "Diamond", price: 20000 }
+        ];
+
+        // 2. Load from Local Storage (or use defaults)
+        let savedMeat = JSON.parse(localStorage.getItem('meatPrices')) || defaultMeat;
+        let savedOre = JSON.parse(localStorage.getItem('orePrices')) || defaultOre;
+
+        // 3. Generate the input fields dynamically
+        function generateInputs(data, containerId, prefix) {
+            const container = document.getElementById(containerId);
+            data.forEach((item, index) => {
+                container.innerHTML += `
+                    <div class="input-group">
+                        <label>${item.name}</label>
+                        <input type="number" id="${prefix}-${index}" value="${item.price}">
+                    </div>
+                `;
+            });
+        }
+
+        generateInputs(savedMeat, 'meat-panel', 'meat');
+        generateInputs(savedOre, 'ore-panel', 'ore');
+
+        // 4. Save new values to Local Storage
+        function savePrices() {
+            // Update Meat array
+            savedMeat.forEach((item, index) => {
+                item.price = parseFloat(document.getElementById(`meat-${index}`).value) || 0;
+            });
+            // Update Ore array
+            savedOre.forEach((item, index) => {
+                item.price = parseFloat(document.getElementById(`ore-${index}`).value) || 0;
+            });
+
+            // Save to browser memory
+            localStorage.setItem('meatPrices', JSON.stringify(savedMeat));
+            localStorage.setItem('orePrices', JSON.stringify(savedOre));
+
+            // Show success message
+            const msg = document.getElementById('success');
+            msg.style.display = 'block';
+            setTimeout(() => msg.style.display = 'none', 3000);
+        }
+    </script>
+</body>
+</html>

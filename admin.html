@@ -3,95 +3,272 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard | Price Manager</title>
+    <title>Admin Dashboard | Login</title>
     <style>
+        /* --- ANIMATIONS --- */
+        @keyframes bg-shift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        @keyframes slide-up {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fade-out {
+            from { opacity: 1; transform: translateY(0) scale(1); }
+            to { opacity: 0; transform: translateY(-20px) scale(0.95); }
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-10px); }
+            40%, 80% { transform: translateX(10px); }
+        }
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f4f6f9;
-            color: #333;
+            /* Animated gradient blending the Meat (Burgundy) and Ore (Steel) colors */
+            background: linear-gradient(-45deg, #1a1a1a, #2c3e50, #7a1a1a, #1a1a1a);
+            background-size: 400% 400%;
+            animation: bg-shift 15s ease infinite;
+            color: white;
             display: flex;
             flex-direction: column;
             align-items: center;
             padding: 30px 15px;
+            margin: 0;
+            min-height: 100vh;
+            overflow-x: hidden;
         }
-        h1 { color: #2c3e50; }
-        .dashboard {
+
+        /* --- GLASSMORPHISM UI --- */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        /* --- LOGIN SCREEN --- */
+        #login-screen {
+            padding: 40px 30px;
+            text-align: center;
+            width: 100%;
+            max-width: 350px;
+            margin-top: 10vh;
+            animation: slide-up 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+        }
+        #login-screen h2 { margin-top: 0; letter-spacing: 1px; }
+        
+        .password-input {
+            width: 85%;
+            padding: 12px 15px;
+            margin: 15px 0;
+            background: rgba(0, 0, 0, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 6px;
+            color: white;
+            font-size: 1rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        .password-input:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 15px rgba(52, 152, 219, 0.5);
+            background: rgba(0, 0, 0, 0.4);
+        }
+        
+        .btn {
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            font-size: 1rem;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .btn-login {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            width: 100%;
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+        }
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(52, 152, 219, 0.5);
+        }
+        .btn-login:active { transform: translateY(1px); }
+
+        .error-msg {
+            color: #ff6b6b;
+            font-weight: bold;
+            margin-top: 15px;
+            display: none;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+        .shake-animation { animation: shake 0.4s ease-in-out; }
+
+        /* --- DASHBOARD --- */
+        #admin-dashboard {
+            display: none; /* Hidden at first */
+            width: 100%;
+            flex-direction: column;
+            align-items: center;
+            opacity: 0; 
+        }
+        .dashboard-container {
             display: flex;
             gap: 30px;
             flex-wrap: wrap;
             justify-content: center;
             width: 100%;
             max-width: 900px;
+            margin-top: 20px;
         }
         .panel {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-            width: 350px;
+            padding: 25px;
+            width: 320px;
+            transition: transform 0.3s ease;
         }
+        .panel:hover { transform: translateY(-5px); }
         .panel h2 {
-            border-bottom: 2px solid #eee;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
             padding-bottom: 10px;
             margin-top: 0;
+            text-align: center;
         }
         .input-group {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
+            padding: 8px 10px;
+            border-radius: 6px;
+            transition: background 0.2s;
         }
-        input[type="number"] {
+        .input-group:hover { background: rgba(255, 255, 255, 0.05); }
+        .input-group label { font-weight: 500; letter-spacing: 0.5px; }
+        .input-group input[type="number"] {
             width: 80px;
-            padding: 5px;
-            border: 1px solid #ccc;
+            padding: 6px;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.3);
             border-radius: 4px;
-        }
-        .btn-save {
-            display: block;
-            width: 100%;
-            padding: 15px;
-            margin-top: 20px;
-            background-color: #27ae60;
             color: white;
-            font-size: 1.1rem;
             font-weight: bold;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
+            text-align: center;
+            transition: border-color 0.3s;
         }
-        .btn-save:hover { background-color: #219150; }
+        .input-group input[type="number"]:focus {
+            outline: none;
+            border-color: #2ecc71;
+            background: rgba(0,0,0,0.5);
+        }
+
+        .btn-save {
+            background: linear-gradient(135deg, #27ae60, #219150);
+            width: 100%;
+            max-width: 400px;
+            padding: 15px;
+            margin-top: 30px;
+            box-shadow: 0 4px 15px rgba(39, 174, 96, 0.3);
+        }
+        .btn-save:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(39, 174, 96, 0.5);
+        }
+
         .success-msg {
-            color: #27ae60;
+            color: #2ecc71;
             font-weight: bold;
             margin-top: 15px;
             display: none;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            animation: slide-up 0.3s ease-out forwards;
         }
     </style>
 </head>
 <body>
 
-    <h1>Price Management Dashboard</h1>
-    <p>Update prices here. They will automatically update on your calculators.</p>
-
-    <div class="dashboard">
-        <div class="panel" id="meat-panel">
-            <h2 style="color: #7a1a1a;">Meat & Fish Division</h2>
-            </div>
-
-        <div class="panel" id="ore-panel">
-            <h2 style="color: #2c3e50;">Ore Division</h2>
-            </div>
+    <div id="login-screen" class="glass-panel">
+        <h2>System Access</h2>
+        <p style="color: #bbb; font-size: 0.9rem;">Authorized personnel only.</p>
+        
+        <input type="password" id="passInput" class="password-input" placeholder="Enter Password">
+        <button class="btn btn-login" onclick="checkPassword()">Authenticate</button>
+        
+        <div id="error-msg" class="error-msg">Access Denied: Invalid Password</div>
+        <br><br>
+        <a href="index.html" style="color: #aaa; text-decoration: none; font-size: 0.85rem; transition: color 0.2s;">← Return to Main Site</a>
     </div>
 
-    <button class="btn-save" onclick="savePrices()">💾 Save All Prices</button>
-    <div id="success" class="success-msg">Prices saved successfully!</div>
+    <div id="admin-dashboard">
+        <h1 style="text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">Global Price Manager</h1>
+        
+        <div class="dashboard-container">
+            <div class="glass-panel panel" id="meat-panel">
+                <h2 style="color: #ff7675;">Meat Division</h2>
+            </div>
+            <div class="glass-panel panel" id="ore-panel">
+                <h2 style="color: #74b9ff;">Ore Division</h2>
+            </div>
+        </div>
 
-    <br>
-    <a href="index.html" style="color: #555; text-decoration: none; font-weight: bold;">← Back to Home</a>
+        <button class="btn btn-save" onclick="savePrices()">💾 Sync to Network</button>
+        <div id="success" class="success-msg">Database successfully updated!</div>
+        
+        <br><br>
+        <a href="index.html" style="color: #aaa; text-decoration: none; font-weight: bold; transition: color 0.2s;">← Exit System</a>
+    </div>
 
     <script>
-        // 1. Define Default Prices (Fallback)
+        // --- ANIMATED LOGIN LOGIC ---
+        function checkPassword() {
+            const enteredPass = document.getElementById('passInput').value;
+            const loginScreen = document.getElementById('login-screen');
+            const dashboard = document.getElementById('admin-dashboard');
+            const errorMessage = document.getElementById('error-msg');
+            
+            // 👉 CHANGE YOUR PASSWORD HERE
+            const correctPassword = "BB-vrgrp"; 
+
+            if (enteredPass === correctPassword) {
+                errorMessage.style.display = 'none';
+                
+                // 1. Trigger the fade-out animation
+                loginScreen.style.animation = "fade-out 0.5s ease-in forwards";
+                
+                // 2. Wait for animation to finish, then swap screens
+                setTimeout(() => {
+                    loginScreen.style.display = 'none';
+                    dashboard.style.display = 'flex';
+                    // Trigger slide-up for the dashboard
+                    dashboard.style.animation = "slide-up 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards";
+                }, 500);
+
+            } else {
+                // Show error and trigger shake animation
+                errorMessage.style.display = 'block';
+                loginScreen.classList.remove('shake-animation');
+                // Trigger reflow to restart animation
+                void loginScreen.offsetWidth; 
+                loginScreen.classList.add('shake-animation');
+            }
+        }
+
+        document.getElementById("passInput").addEventListener("keypress", function(event) {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                checkPassword();
+            }
+        });
+
+        // --- PRICE MANAGER LOGIC ---
         const defaultMeat = [
             { name: "Tuna", price: 120 }, { name: "Halibut", price: 255 }, { name: "Salmon", price: 299 },
             { name: "Swordfish", price: 311 }, { name: "Octopus", price: 314 }, { name: "Squid", price: 296 },
@@ -106,11 +283,9 @@
             { name: "Gold", price: 5240 }, { name: "Diamond", price: 20000 }
         ];
 
-        // 2. Load from Local Storage (or use defaults)
         let savedMeat = JSON.parse(localStorage.getItem('meatPrices')) || defaultMeat;
         let savedOre = JSON.parse(localStorage.getItem('orePrices')) || defaultOre;
 
-        // 3. Generate the input fields dynamically
         function generateInputs(data, containerId, prefix) {
             const container = document.getElementById(containerId);
             data.forEach((item, index) => {
@@ -126,25 +301,28 @@
         generateInputs(savedMeat, 'meat-panel', 'meat');
         generateInputs(savedOre, 'ore-panel', 'ore');
 
-        // 4. Save new values to Local Storage
         function savePrices() {
-            // Update Meat array
             savedMeat.forEach((item, index) => {
                 item.price = parseFloat(document.getElementById(`meat-${index}`).value) || 0;
             });
-            // Update Ore array
             savedOre.forEach((item, index) => {
                 item.price = parseFloat(document.getElementById(`ore-${index}`).value) || 0;
             });
 
-            // Save to browser memory
             localStorage.setItem('meatPrices', JSON.stringify(savedMeat));
             localStorage.setItem('orePrices', JSON.stringify(savedOre));
 
-            // Show success message
             const msg = document.getElementById('success');
             msg.style.display = 'block';
-            setTimeout(() => msg.style.display = 'none', 3000);
+            
+            // Remove the success message smoothly after 3 seconds
+            setTimeout(() => {
+                msg.style.animation = "fade-out 0.5s ease forwards";
+                setTimeout(() => {
+                    msg.style.display = 'none';
+                    msg.style.animation = "slide-up 0.3s ease-out forwards"; // reset
+                }, 500);
+            }, 3000);
         }
     </script>
 </body>

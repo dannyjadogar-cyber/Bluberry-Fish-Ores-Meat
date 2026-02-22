@@ -162,10 +162,10 @@
             <p style="color: #999; margin-bottom: 30px;">Identify your authorization level to proceed.</p>
             
             <button class="btn-role staff" onclick="showLogin('staff')">
-                <span style="font-size: 1.8rem;">📦</span> Logistics Team
+                <span style="font-size: 1.8rem;">📦</span> Staff
             </button>
             <button class="btn-role admin" onclick="showLogin('admin')">
-                <span style="font-size: 1.8rem;">⚙️</span> Master Admin
+                <span style="font-size: 1.8rem;">⚙️</span> Admin
             </button>
         </div>
 
@@ -246,7 +246,7 @@
             document.getElementById('error-msg').style.display = 'none';
 
             if(role === 'staff') {
-                document.getElementById('login-title').innerText = 'Logistics Portal';
+                document.getElementById('login-title').innerText = 'Staff Portal';
                 document.getElementById('login-desc').innerText = 'Please enter the staff password.';
             } else {
                 document.getElementById('login-title').innerText = 'Master Control';
@@ -470,4 +470,5 @@
         }
     </script>
 </body>
+
 </html>

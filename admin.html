@@ -150,9 +150,9 @@
 
         <nav class="nav-menu" id="nav-menu">
             <a href="index.html" class="nav-home">Home</a>
-            <a href="meat.html" class="nav-meat">Meat Division</a>
-            <a href="ore.html" class="nav-ore">Ore Division</a>
-            <a href="admin.html" class="nav-admin active">Admin Panel</a>
+            <a href="meat.html" class="nav-meat active">Sell Fish/Meat</a>
+            <a href="ore.html" class="nav-ore">Sell Ore</a>
+            <a href="admin.html" class="nav-admin">Admin Panel</a>
         </nav>
     </header>
 
@@ -186,9 +186,9 @@
 
         <div id="admin-dashboard">
             <div class="admin-nav">
-                <button class="tab-btn" id="tab-btn-prices" onclick="switchTab('prices-tab')">Manage Prices</button>
-                <button class="tab-btn active" id="tab-btn-orders" onclick="switchTab('orders-tab')">Active Orders</button>
-                <button class="tab-btn" id="tab-btn-logs" onclick="switchTab('logs-tab')">Order Logs</button>
+                <button class="tab-btn" id="tab-btn-prices" onclick="switchTab('prices-tab')">Set Buying Prices</button>
+                <button class="tab-btn active" id="tab-btn-orders" onclick="switchTab('orders-tab')">Incoming Sales</button>
+                <button class="tab-btn" id="tab-btn-logs" onclick="switchTab('logs-tab')">Purchase Logs</button>
             </div>
 
             <div id="prices-tab" class="tab-content">
@@ -197,16 +197,16 @@
                     <div class="glass-panel panel" id="ore-panel"><h2 style="color: #3498db;">Ore Division</h2></div>
                 </div>
                 <button class="btn-save" onclick="savePrices()">Deploy Updates</button>
-                <div id="success" style="color: #2ecc71; display: none; margin-top: 20px;">✅ Database successfully updated!</div>
+                <div id="success" style="color: #2ecc71; display: none; margin-top: 20px;">✅ Buying prices successfully updated!</div>
             </div>
 
             <div id="orders-tab" class="tab-content glass-panel active" style="padding: 30px; width: 100%; box-sizing: border-box; align-items: flex-start;">
-                <h2 style="margin: 0 0 20px 0; border-bottom: 1px solid #333; padding-bottom: 15px; width: 100%;">Active Consignments</h2>
+                <h2 style="margin: 0 0 20px 0; border-bottom: 1px solid #333; padding-bottom: 15px; width: 100%;">Incoming Vendor Sales</h2>
                 <div id="order-list" style="width: 100%;"></div>
             </div>
 
             <div id="logs-tab" class="tab-content glass-panel" style="padding: 30px; width: 100%; box-sizing: border-box; align-items: flex-start;">
-                <h2 style="margin: 0 0 20px 0; border-bottom: 1px solid #333; padding-bottom: 15px; width: 100%;">Archived Order History</h2>
+                <h2 style="margin: 0 0 20px 0; border-bottom: 1px solid #333; padding-bottom: 15px; width: 100%;">Archived Purchase History</h2>
                 <div id="log-list" style="width: 100%;"></div>
             </div>
         </div>
@@ -473,4 +473,5 @@
 </body>
 
 </html>
+
 

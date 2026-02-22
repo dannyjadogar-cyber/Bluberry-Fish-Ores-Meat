@@ -3,161 +3,366 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meat & Ore Industries</title>
+    <title>Bluberry Fish-Ores & Meat</title>
     <style>
-        /* --- NEW ANIMATIONS --- */
-        @keyframes logo-drop {
-            0% { top: -150px; opacity: 0; }
-            100% { top: 20px; opacity: 1; }
-        }
-        @keyframes logo-float {
-            0%, 100% { transform: translateX(-50%) translateY(0); }
-            50% { transform: translateX(-50%) translateY(10px); }
-        }
-        @keyframes fade-slide-up {
-            0% { opacity: 0; transform: translateY(40px); }
-            100% { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes slide-in-bottom {
-            0% { transform: translateY(100%); }
-            100% { transform: translateY(0); }
-        }
-        @keyframes button-pulse {
-            0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.4); }
-            70% { box-shadow: 0 0 0 15px rgba(255, 255, 255, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
-        }
-
-        /* --- BASE STYLES --- */
+        /* --- GLOBAL STYLES --- */
         body, html {
             margin: 0; padding: 0;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            height: 100%; display: flex; flex-direction: column; overflow-x: hidden;
-            background-color: #111; /* Prevents white flashes during load */
+            overflow-x: hidden;
+            background-color: #f4f6f9;
+            scroll-behavior: smooth; 
         }
 
-        /* --- LOGO --- */
-        .main-logo-container {
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 100;
-            /* Combines the drop-in animation with the infinite float */
-            animation: logo-drop 1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards, 
-                       logo-float 4s ease-in-out infinite 1s;
-        }
-        .main-logo {
-            height: 140px; 
-            filter: drop-shadow(0px 8px 15px rgba(0,0,0,0.8));
-        }
-
-        /* --- SPLIT SCREEN --- */
-        .split-container {
-            display: flex; width: 100%; height: calc(100vh - 80px); 
-        }
-        .split {
-            width: 50%; height: 100%;
+        /* --- PRE-LOADER ANIMATION --- */
+        #loader {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: white; z-index: 9999;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
-            text-align: center; color: white; transition: width 0.6s cubic-bezier(0.25, 0.8, 0.25, 1); position: relative;
+            transition: opacity 0.8s ease, visibility 0.8s ease;
         }
-        .split-container:hover .split { width: 40%; }
-        .split-container:hover .split:hover { width: 60%; }
-
-        .meat-side {
-            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.4)), url('https://images.unsplash.com/photo-1603048297172-c92544798d5e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80') center/cover;
-            background-color: #8b0000;
+        .loader-logo {
+            width: 250px;
+            animation: pulse-logo 1.5s ease-in-out infinite;
+            filter: drop-shadow(0px 10px 15px rgba(0,0,0,0.2));
         }
-        .ore-side {
-            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.4)), url('https://images.unsplash.com/photo-1587595431973-160d0d94add1?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80') center/cover;
-            background-color: #4a4a4a;
-        }
-
-        /* --- TEXT & BUTTON ANIMATIONS --- */
-        h1 { 
-            font-size: 3.5rem; margin-bottom: 10px; text-shadow: 2px 2px 4px rgba(0,0,0,0.7); margin-top: 0; 
-            opacity: 0;
-            animation: fade-slide-up 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
-            animation-delay: 0.3s; /* Starts slightly after page load */
-        }
-        p.subtitle { 
-            font-size: 1.2rem; margin-bottom: 30px; text-shadow: 1px 1px 3px rgba(0,0,0,0.7); 
-            opacity: 0;
-            animation: fade-slide-up 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
-            animation-delay: 0.5s;
-        }
-        .action-btn {
-            padding: 15px 40px; font-size: 1.2rem; font-weight: bold; color: white;
-            background-color: transparent; border: 3px solid white; border-radius: 5px;
-            cursor: pointer; transition: all 0.3s; text-decoration: none;
-            opacity: 0;
-            animation: fade-slide-up 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
-            animation-delay: 0.7s;
-        }
-        .action-btn:hover { 
-            background-color: white; color: black; 
-            transform: translateY(-3px);
-            animation: button-pulse 1.5s infinite; /* Adds the glowing pulse */
+        @keyframes pulse-logo {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
         }
 
-        /* --- TRUST SIGNALS --- */
-        .trust-signals {
-            height: 80px; background-color: #1a1a1a; color: #d1d1d1;
-            display: flex; justify-content: space-around; align-items: center;
-            font-size: 0.9rem; padding: 0 20px; text-transform: uppercase; letter-spacing: 1px;
-            transform: translateY(100%);
-            animation: slide-in-bottom 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
-            animation-delay: 1s; /* Slides in last */
-            position: relative; z-index: 50;
+        /* --- MAIN HEADER / NAVIGATION (Animated) --- */
+        .header {
+            position: fixed; 
+            top: 0; 
+            left: 0; width: 100%;
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 15px 50px; box-sizing: border-box; z-index: 1000; 
+            background: transparent;
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); 
         }
-        .trust-item strong { color: white; }
+        .header-logo { 
+            height: 110px; 
+            filter: drop-shadow(0px 4px 8px rgba(0,0,0,0.6)); 
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            position: relative; z-index: 1001; /* Keeps logo above mobile menu */
+        }
         
-        /* Admin Link */
-        .admin-link-container {
-            text-align: center; padding: 10px; background: #0a0a0a;
-            position: relative; z-index: 50;
+        /* --- HAMBURGER MENU ICON --- */
+        .hamburger {
+            display: none; /* Hidden on desktop */
+            flex-direction: column;
+            cursor: pointer;
+            gap: 6px;
+            z-index: 1002; /* Keeps icon above the sliding menu */
+        }
+        .hamburger span {
+            width: 30px; height: 3px;
+            background-color: white;
+            border-radius: 5px;
+            transition: all 0.3s ease-in-out;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.5);
         }
 
-        /* --- MOBILE DESIGN --- */
-        @media (max-width: 768px) {
-            .split-container { flex-direction: column; height: auto; min-height: calc(100vh - 80px); }
-            .split, .split-container:hover .split, .split-container:hover .split:hover {
-                width: 100% !important; height: 50vh; 
+        .nav-menu { display: flex; gap: 25px; }
+        .nav-menu a {
+            text-decoration: none; color: white; font-weight: bold; font-size: 1rem;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.8); transition: color 0.3s ease;
+        }
+
+        /* --- DISTINCT HOVER COLORS --- */
+        .nav-home:hover, .nav-home.active { color: #ff4d4d; }     
+        .nav-meat:hover { color: #ff4d4d; }                       
+        .nav-ore:hover { color: #3498db; }                        
+        .nav-admin:hover { color: #9b59b6; }                      
+        .nav-team:hover { color: #f39c12; }                       
+        .nav-contact:hover { color: #2ecc71; }                    
+
+        /* Scrolled Glassmorphism State */
+        .header.scrolled {
+            padding: 10px 50px; 
+            background: rgba(10, 10, 10, 0.8); 
+            backdrop-filter: blur(15px); 
+            -webkit-backdrop-filter: blur(15px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .header.scrolled .header-logo {
+            height: 55px; 
+            filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.8));
+        }
+
+        /* The Laser Progress Line */
+        .progress-container {
+            position: absolute; bottom: 0; left: 0; width: 100%; height: 3px; background: transparent;
+        }
+        .progress-bar {
+            height: 3px; background: #ff4d4d; width: 0%; box-shadow: 0 0 10px #ff4d4d; 
+        }
+
+        /* --- HERO SECTION (SLIDESHOW) --- */
+        .hero {
+            height: 100vh;
+            position: relative; display: flex; align-items: center;
+            margin-top: 0; 
+            background-color: #222; 
+            overflow: hidden;
+        }
+        
+        .slide {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background-size: cover; background-position: center;
+            opacity: 0; transition: opacity 1s ease-in-out;
+            z-index: 1; 
+            display: flex; align-items: center; 
+        }
+        .slide::after {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.4); z-index: -1;
+        }
+        .slide.active { opacity: 1; z-index: 2; }
+
+        .hero-overlay-box {
+            background-color: rgba(60, 60, 60, 0.85);
+            color: white; padding: 50px; margin-left: 10%;
+            max-width: 450px; border-radius: 4px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            position: relative; z-index: 10; 
+            opacity: 0; transform: translateX(-50px);
+            transition: all 0.8s ease-out 0.5s; 
+        }
+        .slide.active .hero-overlay-box {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        
+        .hero-overlay-box h1 { font-size: 3.5rem; margin: 0 0 10px 0; }
+        .hero-overlay-box p { font-size: 1.2rem; margin: 0; color: #ddd; }
+
+        .slider-arrow {
+            position: absolute; top: 50%; transform: translateY(-50%);
+            background-color: rgba(0,0,0,0.4); color: white; border: none;
+            border-radius: 50%; width: 50px; height: 50px; font-size: 1.5rem;
+            cursor: pointer; transition: background 0.3s; z-index: 20; 
+        }
+        .slider-arrow:hover { background-color: rgba(0,0,0,0.8); }
+        .arrow-left { left: 20px; } .arrow-right { right: 20px; }
+
+        /* --- TEAM SECTION --- */
+        .team-section { padding: 80px 20px; text-align: center; background-color: white; }
+        .team-section h2 { font-size: 2.5rem; color: #2c3e50; margin-bottom: 10px; text-transform: uppercase; }
+        .team-section p.section-sub { color: #666; margin-bottom: 50px; font-size: 1.1rem; }
+        
+        .team-grid {
+            display: flex; flex-wrap: wrap; justify-content: center; gap: 30px; max-width: 1200px; margin: 0 auto;
+        }
+        .team-card {
+            background: #fff; border: 1px solid #eee; border-radius: 10px;
+            padding: 30px 20px; width: 250px; box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .team-card:hover {
+            transform: translateY(-10px); box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+            border-bottom: 4px solid #d32f2f;
+        }
+        .team-card img {
+            width: 120px; height: 120px; border-radius: 50%; object-fit: cover;
+            margin-bottom: 20px; border: 3px solid #f4f6f9; box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .team-card h3 { margin: 0 0 5px 0; color: #333; font-size: 1.3rem; }
+        .team-card p { margin: 0; color: #d32f2f; font-weight: bold; font-size: 0.9rem; text-transform: uppercase; }
+
+        /* --- MOBILE RESPONSIVENESS --- */
+        @media (max-width: 900px) {
+            .header { padding: 15px 25px; }
+            .header-logo { height: 60px; }
+            .header.scrolled { padding: 10px 25px; }
+            .header.scrolled .header-logo { height: 45px; }
+            
+            /* Show Hamburger */
+            .hamburger { display: flex; }
+            
+            /* Convert Nav to Slide-in Mobile Menu */
+            .nav-menu {
+                position: fixed; top: 0; right: -100%; /* Hidden off-screen initially */
+                width: 280px; height: 100vh;
+                background-color: rgba(15, 15, 15, 0.95);
+                backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+                flex-direction: column; justify-content: center; align-items: center;
+                gap: 40px; transition: right 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+                box-shadow: -10px 0 30px rgba(0,0,0,0.5); z-index: 1000;
             }
-            h1 { font-size: 2.5rem; }
-            .main-logo { height: 100px; }
-            .main-logo-container { animation: logo-drop 1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; } /* Disables float on mobile to save space */
-            .trust-signals { flex-direction: column; height: auto; padding: 15px; text-align: center; gap: 10px; }
+            .nav-menu a { font-size: 1.5rem; } /* Make text bigger for tapping */
+            
+            /* When menu is active (open) */
+            .nav-menu.active { right: 0; }
+            
+            /* Hamburger 'X' Animation */
+            .hamburger.active span:nth-child(1) { transform: translateY(9px) rotate(45deg); }
+            .hamburger.active span:nth-child(2) { opacity: 0; }
+            .hamburger.active span:nth-child(3) { transform: translateY(-9px) rotate(-45deg); }
+
+            .hero-overlay-box { margin: 0 auto; text-align: center; padding: 30px; width: 85%; }
+            .hero-overlay-box h1 { font-size: 2.2rem; }
+            .slider-arrow { display: none; } 
         }
     </style>
 </head>
 <body>
 
-    <div class="main-logo-container">
-        <img src="logo.jpg" alt="Bluberry Fish-Ores & Meat" class="main-logo">
+    <div id="loader">
+        <img src="logo.jpg" alt="Bluberry Logo" class="loader-logo">
+        <h2 style="color: #2c3e50; margin-top: 20px; letter-spacing: 2px;">Bluberry Fish-Meat & Ores</h2>
     </div>
 
-    <div class="split-container">
-        <div class="split meat-side">
-            <h1>Premium Meat</h1>
-            <p class="subtitle">Ethically Sourced & Processed</p>
-            <a href="meat.html" class="action-btn">Enter Meat Division</a>
+    <header class="header" id="main-header">
+        <img src="logo.jpg" alt="Bluberry Logo" class="header-logo">
+        
+        <div class="hamburger" id="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
         </div>
 
-        <div class="split ore-side">
-            <h1>Industrial Ore</h1>
-            <p class="subtitle">High-Grade Mining Operations</p>
-            <a href="ore.html" class="action-btn">Enter Ore Division</a>
+        <nav class="nav-menu" id="nav-menu">
+            <a href="#" class="nav-home active">Home</a>
+            <a href="meat.html" class="nav-meat">Meat Division</a>
+            <a href="ore.html" class="nav-ore">Ore Division</a>
+            <a href="admin.html" class="nav-admin">Admin Panel</a>
+            <a href="#team" class="nav-team">Our Team</a>
+            <a href="#contact" class="nav-contact">Contact</a>
+        </nav>
+        
+        <div class="progress-container">
+            <div class="progress-bar" id="scroll-bar"></div>
         </div>
-    </div>
+    </header>
 
-    <div class="trust-signals">
-        <div class="trust-item"><strong>Meat Division:</strong> Certified Food Safety (HACCP)</div>
-        <div class="trust-item"><strong>Ore Division:</strong> ISO 9001 Certified | Licensed Operations</div>
-    </div>
+    <section class="hero">
+        <div class="slide active" style="background-image: url('slideshow1.jpg');">
+            <div class="hero-overlay-box"><h1>Timely Delivery</h1><p>Making your business fast and efficient.</p></div>
+        </div>
+        <div class="slide" style="background-image: url('slideshow2.jpg');">
+            <div class="hero-overlay-box"><h1>Premium Meat</h1><p>Ethically sourced and processed to perfection.</p></div>
+        </div>
+        <div class="slide" style="background-image: url('slideshow3.jpg');">
+            <div class="hero-overlay-box"><h1>Industrial Ore</h1><p>High-grade mining materials for heavy industry.</p></div>
+        </div>
+        <div class="slide" style="background-image: url('slideshow4.jpg');">
+            <div class="hero-overlay-box"><h1>Global Network</h1><p>Connecting vital resources securely to your doorstep.</p></div>
+        </div>
+        <div class="slide" style="background-image: url('slideshow5.jpg');">
+            <div class="hero-overlay-box"><h1>Trusted Partners</h1><p>Unmatched reliability in every single shipment.</p></div>
+        </div>
+
+        <button class="slider-arrow arrow-left" onclick="changeSlide(-1)">&#10094;</button>
+        <button class="slider-arrow arrow-right" onclick="changeSlide(1)">&#10095;</button>
+    </section>
+
+    <section id="team" class="team-section">
+        <h2>Corporate Leadership</h2>
+        <p class="section-sub">Meet the experts driving our Fish, Meat, and Ore operations forward.</p>
+
+        <div class="team-grid">
+            <div class="team-card"><img src="chairman.png" alt="Chairman"><h3>Mysha S. Basundhara</h3><p>Chairman</p></div>
+            <div class="team-card"><img src="chairman.png" alt="Chairman"><h3>Mysha S. Basundhara</h3><p>Chairman</p></div>
+            <div class="team-card"><img src="CEO1.jpg" alt="COO 1"><h3>Danny Jadogar</h3><p>Chief Operating Officer</p></div>
+            <div class="team-card"><img src="https://i.pravatar.cc/250?img=47" alt="COO 2"><h3>Marcus Fernandes</h3><p>Chief Operating Officer</p></div>
+            <div class="team-card"><img src="CFO.png" alt="CFO"><h3>Mike Hendrick</h3><p>Chief Financial Officer</p></div>
+            <div class="team-card"><img src="https://i.pravatar.cc/250?img=44" alt="Advisor"><h3>Derek Kray</h3><p>Corporate Advisor</p></div>
+            <div class="team-card"><img src="https://i.pravatar.cc/250?img=12" alt="Supervisory Staff"><h3>Taylor Scott</h3><p>Lawyer</p></div>
+            <div class="team-card"><img src="https://i.pravatar.cc/250?img=12" alt="Supervisory Staff"><h3>Sierra Luciano</h3><p>Supervisory Staff</p></div>
+        </div>
+    </section>
     
-    <div class="admin-link-container">
-        <a href="admin.html" style="color: #444; text-decoration: none; font-size: 0.8rem; transition: color 0.3s;" onmouseover="this.style.color='#aaa'" onmouseout="this.style.color='#444'">Admin Login</a>
-    </div>
+    <section id="contact" style="padding: 60px 20px; background-color: #2c3e50; color: white; text-align: center;">
+        <h2 style="margin-top: 0; color: #ff4d4d; text-transform: uppercase;">Get In Touch</h2>
+        <p style="font-size: 1.1rem; margin-bottom: 20px;">Ready to partner with Bluberry Fish-Ores & Meat? Join our community and reach out to our logistics team on Discord today.</p>
+        
+        <div style="display: flex; justify-content: center; margin-top: 35px;">
+            <a href="https://discord.gg/h8pzvKahwr" target="_blank" style="background: #5865F2; color: white; padding: 16px 40px; text-decoration: none; border-radius: 8px; font-weight: 800; font-size: 1.2rem; letter-spacing: 1px; text-transform: uppercase; transition: all 0.3s ease; box-shadow: 0 8px 20px rgba(88, 101, 242, 0.4); display: flex; align-items: center; gap: 10px;" onmouseover="this.style.background='#4752C4'; this.style.transform='translateY(-3px)';" onmouseout="this.style.background='#5865F2'; this.style.transform='translateY(0)';">
+                <span style="font-size: 1.5rem;">💬</span> Join Our Discord
+            </a>
+        </div>
+        <br><br><br><br> 
+    </section>
+
+    <script>
+        // --- Pre-loader Logic ---
+        window.addEventListener('load', function() {
+            setTimeout(function() {
+                const loader = document.getElementById('loader');
+                loader.style.opacity = '0';
+                loader.style.visibility = 'hidden';
+            }, 1500); 
+        });
+
+        // --- HAMBURGER MENU LOGIC ---
+        const hamburger = document.getElementById('hamburger');
+        const navMenu = document.getElementById('nav-menu');
+
+        hamburger.addEventListener('click', () => {
+            hamburger.classList.toggle('active');
+            navMenu.classList.toggle('active');
+        });
+
+        // Close menu when a link is clicked
+        document.querySelectorAll('.nav-menu a').forEach(link => {
+            link.addEventListener('click', () => {
+                hamburger.classList.remove('active');
+                navMenu.classList.remove('active');
+            });
+        });
+
+        // --- SMART HEADER SCROLL LOGIC ---
+        window.addEventListener('scroll', function() {
+            const header = document.getElementById('main-header');
+            const scrollBar = document.getElementById('scroll-bar');
+            
+            // Shrink and Blur Header
+            if (window.scrollY > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+
+            // Calculate the Red Progress Line
+            let winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            let height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            let scrolled = (height > 0) ? (winScroll / height) * 100 : 0;
+            scrollBar.style.width = scrolled + "%";
+        });
+
+        // --- Slideshow Logic ---
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        let slideInterval;
+
+        function showSlide(index) {
+            slides.forEach((slide) => slide.classList.remove('active'));
+            if (index >= slides.length) currentSlide = 0;
+            if (index < 0) currentSlide = slides.length - 1;
+            slides[currentSlide].classList.add('active');
+        }
+
+        function changeSlide(direction) {
+            currentSlide += direction;
+            showSlide(currentSlide);
+            resetInterval(); 
+        }
+
+        function autoSlide() {
+            currentSlide++;
+            showSlide(currentSlide);
+        }
+
+        function resetInterval() {
+            clearInterval(slideInterval);
+            slideInterval = setInterval(autoSlide, 5000); 
+        }
+
+        slideInterval = setInterval(autoSlide, 5000); 
+    </script>
 
 </body>
 </html>

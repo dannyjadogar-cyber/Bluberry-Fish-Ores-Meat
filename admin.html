@@ -3,326 +3,470 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard | Login</title>
+    <title>Admin Dashboard | Secure Portal</title>
     <style>
-        /* --- ANIMATIONS --- */
-        @keyframes bg-shift {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-        @keyframes slide-up {
-            from { opacity: 0; transform: translateY(40px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes fade-out {
-            from { opacity: 1; transform: translateY(0) scale(1); }
-            to { opacity: 0; transform: translateY(-20px) scale(0.95); }
-        }
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            20%, 60% { transform: translateX(-10px); }
-            40%, 80% { transform: translateX(10px); }
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            /* Animated gradient blending the Meat (Burgundy) and Ore (Steel) colors */
-            background: linear-gradient(-45deg, #1a1a1a, #2c3e50, #7a1a1a, #1a1a1a);
-            background-size: 400% 400%;
-            animation: bg-shift 15s ease infinite;
-            color: white;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 30px 15px;
-            margin: 0;
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
-
-        /* --- GLASSMORPHISM UI --- */
-        .glass-panel {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-        }
-
-        /* --- LOGIN SCREEN --- */
-        #login-screen {
-            padding: 40px 30px;
-            text-align: center;
-            width: 100%;
-            max-width: 350px;
-            margin-top: 10vh;
-            animation: slide-up 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
-        }
-        #login-screen h2 { margin-top: 0; letter-spacing: 1px; }
+        /* --- GLOBAL STYLES --- */
+        body, html { margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: #050505; color: #f0f0f0; overflow-x: hidden; scroll-behavior: smooth; }
+        @keyframes slide-up { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fade-out { from { opacity: 1; transform: translateY(0) scale(1); } to { opacity: 0; transform: translateY(-20px) scale(0.95); } }
         
-        .password-input {
-            width: 85%;
-            padding: 12px 15px;
-            margin: 15px 0;
-            background: rgba(0, 0, 0, 0.2);
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            border-radius: 6px;
-            color: white;
-            font-size: 1rem;
-            text-align: center;
-            transition: all 0.3s ease;
-        }
-        .password-input:focus {
-            outline: none;
-            border-color: #3498db;
-            box-shadow: 0 0 15px rgba(52, 152, 219, 0.5);
-            background: rgba(0, 0, 0, 0.4);
-        }
-        
-        .btn {
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            font-size: 1rem;
-            font-weight: bold;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        .btn-login {
-            background: linear-gradient(135deg, #3498db, #2980b9);
-            width: 100%;
-            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
-        }
-        .btn-login:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(52, 152, 219, 0.5);
-        }
-        .btn-login:active { transform: translateY(1px); }
-
-        .error-msg {
-            color: #ff6b6b;
-            font-weight: bold;
-            margin-top: 15px;
-            display: none;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        /* The Shake Animation */
+        @keyframes shake { 
+            0%, 100% { transform: translateX(0); } 
+            20%, 60% { transform: translateX(-10px); } 
+            40%, 80% { transform: translateX(10px); } 
         }
         .shake-animation { animation: shake 0.4s ease-in-out; }
 
-        /* --- DASHBOARD --- */
-        #admin-dashboard {
-            display: none; /* Hidden at first */
-            width: 100%;
-            flex-direction: column;
-            align-items: center;
-            opacity: 0; 
-        }
-        .dashboard-container {
-            display: flex;
-            gap: 30px;
-            flex-wrap: wrap;
-            justify-content: center;
-            width: 100%;
-            max-width: 900px;
-            margin-top: 20px;
-        }
-        .panel {
-            padding: 25px;
-            width: 320px;
-            transition: transform 0.3s ease;
-        }
-        .panel:hover { transform: translateY(-5px); }
-        .panel h2 {
-            border-bottom: 1px solid rgba(255,255,255,0.2);
-            padding-bottom: 10px;
-            margin-top: 0;
-            text-align: center;
-        }
-        .input-group {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-            padding: 8px 10px;
-            border-radius: 6px;
-            transition: background 0.2s;
-        }
-        .input-group:hover { background: rgba(255, 255, 255, 0.05); }
-        .input-group label { font-weight: 500; letter-spacing: 0.5px; }
-        .input-group input[type="number"] {
-            width: 80px;
-            padding: 6px;
-            background: rgba(0,0,0,0.3);
-            border: 1px solid rgba(255,255,255,0.3);
-            border-radius: 4px;
-            color: white;
-            font-weight: bold;
-            text-align: center;
-            transition: border-color 0.3s;
-        }
-        .input-group input[type="number"]:focus {
-            outline: none;
-            border-color: #2ecc71;
-            background: rgba(0,0,0,0.5);
+        @keyframes ambient-glow { 0% { opacity: 0.3; transform: scale(1); } 50% { opacity: 0.6; transform: scale(1.1); } 100% { opacity: 0.3; transform: scale(1); } }
+        .ambient-left { position: fixed; top: -10%; left: -20%; width: 70%; height: 120vh; background: radial-gradient(circle, rgba(122, 26, 26, 0.3) 0%, transparent 60%); z-index: -1; pointer-events: none; animation: ambient-glow 12s ease-in-out infinite; }
+        .ambient-right { position: fixed; top: -10%; right: -20%; width: 70%; height: 120vh; background: radial-gradient(circle, rgba(52, 152, 219, 0.25) 0%, transparent 60%); z-index: -1; pointer-events: none; animation: ambient-glow 10s ease-in-out infinite reverse; }
+
+        /* --- SMART HEADER --- */
+        .header { position: fixed; top: 0; left: 0; width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 15px 50px; box-sizing: border-box; z-index: 1000; background: rgba(10, 10, 10, 0.4); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); transition: all 0.4s; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .header-logo { height: 70px; filter: drop-shadow(0px 4px 8px rgba(0,0,0,0.6)); position: relative; z-index: 1001; transition: all 0.4s; }
+        
+        /* HAMBURGER MENU */
+        .hamburger { display: none; flex-direction: column; cursor: pointer; gap: 6px; z-index: 1002; }
+        .hamburger span { width: 30px; height: 3px; background-color: white; border-radius: 5px; transition: all 0.3s ease-in-out; box-shadow: 0 2px 5px rgba(0,0,0,0.5); }
+
+        .nav-menu { display: flex; gap: 25px; } 
+        .nav-menu a { text-decoration: none; color: white; font-weight: bold; font-size: 1rem; text-shadow: 1px 1px 3px rgba(0,0,0,0.8); transition: color 0.3s; }
+        
+        /* --- DISTINCT NAV HOVER COLORS --- */
+        .nav-home:hover { color: #ff4d4d; }                       
+        .nav-meat:hover { color: #ff4d4d; }                       
+        .nav-ore:hover { color: #3498db; }                        
+        .nav-admin:hover, .nav-admin.active { color: #9b59b6; } 
+
+        .header.scrolled { padding: 10px 50px; background: rgba(5, 5, 5, 0.95); box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
+        .header.scrolled .header-logo { height: 45px; }
+        
+        .main-content { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 120px 15px 50px 15px; min-height: calc(100vh - 170px); }
+        .glass-panel { background: rgba(20, 20, 20, 0.6); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 16px; box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5); }
+
+        /* ROLE SELECTION & LOGIN */
+        #role-screen, #login-screen { padding: 50px 40px; text-align: center; width: 100%; max-width: 450px; animation: slide-up 0.8s forwards; box-sizing: border-box; }
+        #role-screen h2, #login-screen h2 { margin-top: 0; font-size: 2rem; letter-spacing: 1px; color: #fff; }
+        
+        .btn-role { background: rgba(0,0,0,0.5); border: 1px solid #333; color: white; padding: 20px; width: 100%; margin-bottom: 15px; border-radius: 10px; font-size: 1.2rem; font-weight: bold; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 15px; }
+        .btn-role.staff:hover { background: #3498db; border-color: #3498db; transform: translateY(-3px); box-shadow: 0 10px 20px rgba(52, 152, 219, 0.3); }
+        .btn-role.admin:hover { background: #9b59b6; border-color: #9b59b6; transform: translateY(-3px); box-shadow: 0 10px 20px rgba(155, 89, 182, 0.3); }
+
+        .password-input { width: 100%; padding: 14px 15px; margin: 20px 0; background: rgba(0, 0, 0, 0.5); border: 1px solid #333; border-radius: 8px; color: white; font-size: 1.1rem; text-align: center; transition: all 0.3s; box-sizing: border-box; }
+        .password-input:focus { outline: none; border-color: #9b59b6; background: rgba(0, 0, 0, 0.8); box-shadow: 0 0 15px rgba(155, 89, 182, 0.3); }
+        
+        .btn-auth { background: #9b59b6; color: white; border: none; padding: 14px 20px; font-weight: bold; border-radius: 8px; cursor: pointer; width: 100%; text-transform: uppercase; transition: all 0.2s; flex: 1; }
+        .btn-auth:hover { background: #8e44ad; transform: translateY(-2px); }
+        .btn-back { background: #333; border: 1px solid #555; }
+        .btn-back:hover { background: #444; }
+        
+        .error-msg { color: #ff4d4d; font-weight: bold; margin-top: 15px; display: none; } 
+
+        /* DASHBOARD LAYOUT */
+        #admin-dashboard { display: none; width: 100%; max-width: 1000px; flex-direction: column; opacity: 0; }
+        .admin-nav { display: flex; justify-content: center; gap: 15px; margin-bottom: 30px; flex-wrap: wrap; }
+        .tab-btn { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: white; padding: 12px 25px; border-radius: 8px; cursor: pointer; font-weight: bold; transition: all 0.2s; text-transform: uppercase; letter-spacing: 1px; }
+        .tab-btn.active { background: #9b59b6; border-color: #9b59b6; box-shadow: 0 0 15px rgba(155, 89, 182, 0.4); }
+        .tab-content { display: none; flex-direction: column; align-items: center; animation: slide-up 0.4s; }
+        .tab-content.active { display: flex; }
+
+        /* PRICES TAB */
+        .dashboard-container { display: flex; gap: 30px; flex-wrap: wrap; justify-content: center; width: 100%; }
+        .panel { padding: 30px; width: 340px; }
+        .panel h2 { border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px; margin-top: 0; text-align: center; font-size: 1.6rem; text-transform: uppercase; }
+        .input-group { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding: 10px 15px; border-radius: 8px; background: rgba(0,0,0,0.2); }
+        .input-group input { width: 80px; padding: 8px; background: rgba(0,0,0,0.6); border: 1px solid #444; border-radius: 6px; color: white; font-weight: bold; text-align: center; }
+        .btn-save { background: #2ecc71; color: #000; border: none; width: 100%; max-width: 400px; padding: 16px; margin-top: 40px; font-weight: 800; border-radius: 8px; cursor: pointer; text-transform: uppercase; }
+
+        /* ORDERS & LOGS TABS */
+        .order-card { background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; width: 100%; margin-bottom: 20px; padding: 25px; box-sizing: border-box; }
+        .order-header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 1px dashed #444; padding-bottom: 15px; margin-bottom: 15px; }
+        .order-id { font-size: 1.4rem; font-weight: bold; color: #ff4d4d; letter-spacing: 1px; }
+        .order-id.ore-type { color: #3498db; }
+        .order-customer { font-size: 1.1rem; font-weight: 600; color: #fff; margin-top: 5px; }
+        .order-date { color: #888; font-size: 0.9rem; margin-top: 5px; }
+        .completed-badge { color: #2ecc71; font-size: 0.85rem; font-weight: bold; margin-top: 5px; display: inline-block; background: rgba(46, 204, 113, 0.1); padding: 4px 8px; border-radius: 4px; border: 1px solid rgba(46, 204, 113, 0.3); }
+        
+        .order-items { margin-bottom: 15px; }
+        .order-item-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .order-total { font-size: 1.3rem; font-weight: bold; text-align: right; color: #2ecc71; padding-top: 10px; }
+        
+        .btn-export { background: #f39c12; color: #000; border: none; padding: 8px 15px; font-weight: bold; border-radius: 6px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; font-size: 0.9rem; transition: 0.2s; }
+        .btn-export:hover { background: #e67e22; transform: translateY(-1px); }
+        
+        .btn-action { background: transparent; padding: 8px 15px; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.2s; font-size: 0.9rem; margin-top: 10px; }
+        .btn-complete { border: 1px solid #2ecc71; color: #2ecc71; }
+        .btn-complete:hover { background: #2ecc71; color: #000; }
+        .btn-delete { border: 1px solid #e74c3c; color: #e74c3c; }
+        .btn-delete:hover { background: #e74c3c; color: white; }
+
+        .btn-actions-container { display: flex; flex-direction: column; align-items: flex-end; }
+        .empty-inbox { color: #666; font-size: 1.2rem; text-align: center; margin-top: 50px; font-style: italic; }
+
+        /* MOBILE RESPONSIVENESS */
+        @media (max-width: 900px) {
+            .header { padding: 15px 25px; } .header-logo { height: 60px; }
+            .header.scrolled { padding: 10px 25px; } .header.scrolled .header-logo { height: 40px; }
+            
+            .hamburger { display: flex; }
+            .nav-menu {
+                position: fixed; top: 0; right: -100%; 
+                width: 280px; height: 100vh;
+                background-color: rgba(15, 15, 15, 0.95);
+                backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+                flex-direction: column; justify-content: center; align-items: center;
+                gap: 40px; transition: right 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+                box-shadow: -10px 0 30px rgba(0,0,0,0.5); z-index: 1000;
+            }
+            .nav-menu a { font-size: 1.5rem; }
+            .nav-menu.active { right: 0; }
+            
+            .hamburger.active span:nth-child(1) { transform: translateY(9px) rotate(45deg); }
+            .hamburger.active span:nth-child(2) { opacity: 0; }
+            .hamburger.active span:nth-child(3) { transform: translateY(-9px) rotate(-45deg); }
         }
 
-        .btn-save {
-            background: linear-gradient(135deg, #27ae60, #219150);
-            width: 100%;
-            max-width: 400px;
-            padding: 15px;
-            margin-top: 30px;
-            box-shadow: 0 4px 15px rgba(39, 174, 96, 0.3);
-        }
-        .btn-save:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(39, 174, 96, 0.5);
-        }
-
-        .success-msg {
-            color: #2ecc71;
-            font-weight: bold;
-            margin-top: 15px;
-            display: none;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
-            animation: slide-up 0.3s ease-out forwards;
+        @media (max-width: 600px) {
+            .order-header { flex-direction: column; gap: 15px; }
+            .btn-actions-container { flex-direction: row; width: 100%; justify-content: space-between; align-items: center; }
+            .btn-action { margin-top: 0; }
         }
     </style>
 </head>
 <body>
 
-    <div id="login-screen" class="glass-panel">
-        <h2>System Access</h2>
-        <p style="color: #bbb; font-size: 0.9rem;">Authorized personnel only.</p>
-        
-        <input type="password" id="passInput" class="password-input" placeholder="Enter Password">
-        <button class="btn btn-login" onclick="checkPassword()">Authenticate</button>
-        
-        <div id="error-msg" class="error-msg">Access Denied: Invalid Password</div>
-        <br><br>
-        <a href="index.html" style="color: #aaa; text-decoration: none; font-size: 0.85rem; transition: color 0.2s;">← Return to Main Site</a>
-    </div>
+    <div class="ambient-left"></div> <div class="ambient-right"></div>
 
-    <div id="admin-dashboard">
-        <h1 style="text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">Global Price Manager</h1>
+    <header class="header" id="main-header">
+        <img src="logo.jpg" alt="Bluberry Logo" class="header-logo">
         
-        <div class="dashboard-container">
-            <div class="glass-panel panel" id="meat-panel">
-                <h2 style="color: #ff7675;">Meat Division</h2>
-            </div>
-            <div class="glass-panel panel" id="ore-panel">
-                <h2 style="color: #74b9ff;">Ore Division</h2>
-            </div>
+        <div class="hamburger" id="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
         </div>
 
-        <button class="btn btn-save" onclick="savePrices()">💾 Sync to Network</button>
-        <div id="success" class="success-msg">Database successfully updated!</div>
+        <nav class="nav-menu" id="nav-menu">
+            <a href="index.html" class="nav-home">Home</a>
+            <a href="meat.html" class="nav-meat">Meat Division</a>
+            <a href="ore.html" class="nav-ore">Ore Division</a>
+            <a href="admin.html" class="nav-admin active">Admin Panel</a>
+        </nav>
+    </header>
+
+    <div class="main-content">
         
-        <br><br>
-        <a href="index.html" style="color: #aaa; text-decoration: none; font-weight: bold; transition: color 0.2s;">← Exit System</a>
+        <div id="role-screen" class="glass-panel">
+            <h2>Select Access Level</h2>
+            <p style="color: #999; margin-bottom: 30px;">Identify your authorization level to proceed.</p>
+            
+            <button class="btn-role staff" onclick="showLogin('staff')">
+                <span style="font-size: 1.8rem;">📦</span> Logistics Team
+            </button>
+            <button class="btn-role admin" onclick="showLogin('admin')">
+                <span style="font-size: 1.8rem;">⚙️</span> Master Admin
+            </button>
+        </div>
+
+        <div id="login-screen" class="glass-panel" style="display: none;">
+            <h2 id="login-title">System Access</h2>
+            <p id="login-desc" style="color: #999; font-size: 0.95rem; margin-bottom: 20px;">Enter credentials to continue.</p>
+            
+            <input type="password" id="passInput" class="password-input" placeholder="Enter Password">
+            
+            <div style="display: flex; gap: 10px;">
+                <button class="btn-auth btn-back" onclick="goBackToRoles()">Cancel</button>
+                <button class="btn-auth" onclick="checkPassword()">Authenticate</button>
+            </div>
+            
+            <div id="error-msg" class="error-msg">Access Denied: Invalid Password</div>
+        </div>
+
+        <div id="admin-dashboard">
+            <div class="admin-nav">
+                <button class="tab-btn" id="tab-btn-prices" onclick="switchTab('prices-tab')">Manage Prices</button>
+                <button class="tab-btn active" id="tab-btn-orders" onclick="switchTab('orders-tab')">Active Orders</button>
+                <button class="tab-btn" id="tab-btn-logs" onclick="switchTab('logs-tab')">Order Logs</button>
+            </div>
+
+            <div id="prices-tab" class="tab-content">
+                <div class="dashboard-container">
+                    <div class="glass-panel panel" id="meat-panel"><h2 style="color: #ff4d4d;">Meat Division</h2></div>
+                    <div class="glass-panel panel" id="ore-panel"><h2 style="color: #3498db;">Ore Division</h2></div>
+                </div>
+                <button class="btn-save" onclick="savePrices()">Deploy Updates</button>
+                <div id="success" style="color: #2ecc71; display: none; margin-top: 20px;">✅ Database successfully updated!</div>
+            </div>
+
+            <div id="orders-tab" class="tab-content glass-panel active" style="padding: 30px; width: 100%; box-sizing: border-box; align-items: flex-start;">
+                <h2 style="margin: 0 0 20px 0; border-bottom: 1px solid #333; padding-bottom: 15px; width: 100%;">Active Consignments</h2>
+                <div id="order-list" style="width: 100%;"></div>
+            </div>
+
+            <div id="logs-tab" class="tab-content glass-panel" style="padding: 30px; width: 100%; box-sizing: border-box; align-items: flex-start;">
+                <h2 style="margin: 0 0 20px 0; border-bottom: 1px solid #333; padding-bottom: 15px; width: 100%;">Archived Order History</h2>
+                <div id="log-list" style="width: 100%;"></div>
+            </div>
+        </div>
     </div>
 
     <script>
-        // --- ANIMATED LOGIN LOGIC ---
-        function checkPassword() {
-            const enteredPass = document.getElementById('passInput').value;
-            const loginScreen = document.getElementById('login-screen');
-            const dashboard = document.getElementById('admin-dashboard');
-            const errorMessage = document.getElementById('error-msg');
-            
-            // 👉 CHANGE YOUR PASSWORD HERE
-            const correctPassword = "BB-vrgrp"; 
+        // --- MOBILE MENU LOGIC ---
+        const hamburger = document.getElementById('hamburger');
+        const navMenu = document.getElementById('nav-menu');
 
-            if (enteredPass === correctPassword) {
-                errorMessage.style.display = 'none';
-                
-                // 1. Trigger the fade-out animation
-                loginScreen.style.animation = "fade-out 0.5s ease-in forwards";
-                
-                // 2. Wait for animation to finish, then swap screens
-                setTimeout(() => {
-                    loginScreen.style.display = 'none';
-                    dashboard.style.display = 'flex';
-                    // Trigger slide-up for the dashboard
-                    dashboard.style.animation = "slide-up 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards";
-                }, 500);
-
-            } else {
-                // Show error and trigger shake animation
-                errorMessage.style.display = 'block';
-                loginScreen.classList.remove('shake-animation');
-                // Trigger reflow to restart animation
-                void loginScreen.offsetWidth; 
-                loginScreen.classList.add('shake-animation');
-            }
-        }
-
-        document.getElementById("passInput").addEventListener("keypress", function(event) {
-            if (event.key === "Enter") {
-                event.preventDefault();
-                checkPassword();
-            }
+        hamburger.addEventListener('click', () => {
+            hamburger.classList.toggle('active');
+            navMenu.classList.toggle('active');
         });
 
+        document.querySelectorAll('.nav-menu a').forEach(link => {
+            link.addEventListener('click', () => {
+                hamburger.classList.remove('active');
+                navMenu.classList.remove('active');
+            });
+        });
+
+        // Header Scroll
+        window.addEventListener('scroll', function() {
+            const header = document.getElementById('main-header');
+            if (window.scrollY > 50) header.classList.add('scrolled'); 
+            else header.classList.remove('scrolled');
+        });
+
+        // --- ROLE BASED LOGIN LOGIC ---
+        let currentRole = '';
+
+        function showLogin(role) {
+            currentRole = role;
+            document.getElementById('role-screen').style.display = 'none';
+            document.getElementById('login-screen').style.display = 'block';
+            document.getElementById('passInput').value = '';
+            document.getElementById('error-msg').style.display = 'none';
+
+            if(role === 'staff') {
+                document.getElementById('login-title').innerText = 'Logistics Portal';
+                document.getElementById('login-desc').innerText = 'Please enter the staff password.';
+            } else {
+                document.getElementById('login-title').innerText = 'Master Control';
+                document.getElementById('login-desc').innerText = 'Please enter the administrative password.';
+            }
+            document.getElementById('passInput').focus();
+        }
+
+        function goBackToRoles() {
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('role-screen').style.display = 'block';
+            currentRole = '';
+        }
+
+        function checkPassword() {
+            const passInput = document.getElementById('passInput');
+            const errorMsg = document.getElementById('error-msg');
+            let isValid = false;
+
+            // Define passwords based on role
+            if (currentRole === 'staff' && passInput.value === 'BB-vstaff') isValid = true;
+            if (currentRole === 'admin' && passInput.value === 'BB-vrgrp') isValid = true;
+
+            if (isValid) {
+                document.getElementById('login-screen').style.display = 'none';
+                const dash = document.getElementById('admin-dashboard');
+                dash.style.display = 'flex'; 
+                dash.style.animation = "slide-up 0.8s forwards";
+                
+                if (currentRole === 'staff') {
+                    // Hide Prices and Logs tabs from Staff
+                    document.getElementById('tab-btn-prices').style.display = 'none';
+                    document.getElementById('tab-btn-logs').style.display = 'none';
+                    switchTab('orders-tab'); // Force them into the orders tab
+                } else {
+                    // Show all tabs for Admin
+                    document.getElementById('tab-btn-prices').style.display = 'inline-block';
+                    document.getElementById('tab-btn-logs').style.display = 'inline-block';
+                    switchTab('prices-tab'); // Default admin to prices
+                }
+
+                loadOrders(); 
+                loadLogs();
+            } else {
+                // Trigger the shake animation perfectly every time
+                errorMsg.style.display = 'block';
+                
+                passInput.classList.remove('shake-animation');
+                errorMsg.classList.remove('shake-animation');
+                
+                void passInput.offsetWidth; // Reflow magic
+                void errorMsg.offsetWidth; 
+                
+                passInput.classList.add('shake-animation');
+                errorMsg.classList.add('shake-animation');
+                
+                passInput.value = ''; // Clears the box for the next attempt
+            }
+        }
+        document.getElementById("passInput").addEventListener("keypress", (e) => { if (e.key === "Enter") checkPassword(); });
+
+        // --- TAB SWITCHER ---
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            
+            if(tabId === 'prices-tab') document.getElementById('tab-btn-prices').classList.add('active');
+            if(tabId === 'orders-tab') document.getElementById('tab-btn-orders').classList.add('active');
+            if(tabId === 'logs-tab') document.getElementById('tab-btn-logs').classList.add('active');
+        }
+
         // --- PRICE MANAGER LOGIC ---
-        const defaultMeat = [
-            { name: "Tuna", price: 120 }, { name: "Halibut", price: 255 }, { name: "Salmon", price: 299 },
-            { name: "Swordfish", price: 311 }, { name: "Octopus", price: 314 }, { name: "Squid", price: 296 },
-            { name: "Ray", price: 244 }, { name: "Sturgeon", price: 183 }, { name: "Bluefin Tuna", price: 596 },
-            { name: "Sea Turtle", price: 691 }, { name: "Atlantic Salmon", price: 541 }, 
-            { name: "Pacific Lamprey", price: 654 }, { name: "Steelhead Trout", price: 702 }, 
-            { name: "Marlin", price: 12319 }, { name: "Deer", price: 1000 }
-        ];
-
-        const defaultOre = [
-            { name: "Coal", price: 425 }, { name: "Iron", price: 1280 }, 
-            { name: "Gold", price: 5240 }, { name: "Diamond", price: 20000 }
-        ];
-
-        let savedMeat = JSON.parse(localStorage.getItem('meatPrices')) || defaultMeat;
-        let savedOre = JSON.parse(localStorage.getItem('orePrices')) || defaultOre;
+        let savedMeat = JSON.parse(localStorage.getItem('meatPrices')) || [ { name: "Tuna", price: 120 }, { name: "Halibut", price: 255 }, { name: "Salmon", price: 299 }, { name: "Swordfish", price: 311 }, { name: "Octopus", price: 314 }, { name: "Squid", price: 296 }, { name: "Ray", price: 244 }, { name: "Sturgeon", price: 183 }, { name: "Bluefin Tuna", price: 596 }, { name: "Sea Turtle", price: 691 }, { name: "Atlantic Salmon", price: 541 }, { name: "Pacific Lamprey", price: 654 }, { name: "Steelhead Trout", price: 702 }, { name: "Marlin", price: 12319 }, { name: "Deer", price: 1000 } ];
+        let savedOre = JSON.parse(localStorage.getItem('orePrices')) || [ { name: "Coal", price: 425 }, { name: "Iron", price: 1280 }, { name: "Gold", price: 5240 }, { name: "Diamond", price: 20000 } ];
 
         function generateInputs(data, containerId, prefix) {
             const container = document.getElementById(containerId);
+            container.innerHTML = ''; // prevent duplicates on reload
             data.forEach((item, index) => {
-                container.innerHTML += `
-                    <div class="input-group">
-                        <label>${item.name}</label>
-                        <input type="number" id="${prefix}-${index}" value="${item.price}">
-                    </div>
-                `;
+                container.innerHTML += `<div class="input-group"><label>${item.name}</label><input type="number" id="${prefix}-${index}" value="${item.price}"></div>`;
             });
         }
-
-        generateInputs(savedMeat, 'meat-panel', 'meat');
-        generateInputs(savedOre, 'ore-panel', 'ore');
+        generateInputs(savedMeat, 'meat-panel', 'meat'); generateInputs(savedOre, 'ore-panel', 'ore');
 
         function savePrices() {
-            savedMeat.forEach((item, index) => {
-                item.price = parseFloat(document.getElementById(`meat-${index}`).value) || 0;
-            });
-            savedOre.forEach((item, index) => {
-                item.price = parseFloat(document.getElementById(`ore-${index}`).value) || 0;
-            });
+            savedMeat.forEach((item, index) => { item.price = parseFloat(document.getElementById(`meat-${index}`).value) || 0; });
+            savedOre.forEach((item, index) => { item.price = parseFloat(document.getElementById(`ore-${index}`).value) || 0; });
+            localStorage.setItem('meatPrices', JSON.stringify(savedMeat)); localStorage.setItem('orePrices', JSON.stringify(savedOre));
+            document.getElementById('success').style.display = 'block'; setTimeout(() => document.getElementById('success').style.display = 'none', 3000);
+        }
 
-            localStorage.setItem('meatPrices', JSON.stringify(savedMeat));
-            localStorage.setItem('orePrices', JSON.stringify(savedOre));
+        // --- ACTIVE ORDERS LOGIC ---
+        function loadOrders() {
+            const orderList = document.getElementById('order-list');
+            const orders = JSON.parse(localStorage.getItem('bluberryOrders')) || [];
+            orderList.innerHTML = '';
 
-            const msg = document.getElementById('success');
-            msg.style.display = 'block';
+            if(orders.length === 0) {
+                orderList.innerHTML = '<div class="empty-inbox">No active orders at this time.</div>';
+                return;
+            }
+
+            for (let i = orders.length - 1; i >= 0; i--) {
+                const order = orders[i];
+                let itemsHtml = '';
+                order.items.forEach(item => { itemsHtml += `<div class="order-item-row"><span>${item.amount}x ${item.name}</span><span>$${item.total}</span></div>`; });
+                const idClass = order.division === 'Ore' ? 'ore-type' : '';
+                const customerName = order.customer || "Guest User";
+
+                orderList.innerHTML += `
+                    <div class="order-card">
+                        <div class="order-header">
+                            <div>
+                                <div class="order-id ${idClass}">${order.id}</div>
+                                <div class="order-customer">👤 ${customerName}</div>
+                                <div class="order-date">Created: ${order.date}</div>
+                            </div>
+                            <div class="btn-actions-container">
+                                <button class="btn-export" onclick="exportCSV('bluberryOrders', ${i})">📥 Export .CSV</button>
+                                <button class="btn-action btn-complete" onclick="completeOrder(${i})">✔ Mark Completed</button>
+                            </div>
+                        </div>
+                        <div class="order-items">${itemsHtml}</div>
+                        <div class="order-total">Grand Total: $${order.total}</div>
+                    </div>
+                `;
+            }
+        }
+
+        function completeOrder(index) {
+            let orders = JSON.parse(localStorage.getItem('bluberryOrders')) || [];
+            let logs = JSON.parse(localStorage.getItem('bluberryOrderLogs')) || [];
             
-            // Remove the success message smoothly after 3 seconds
-            setTimeout(() => {
-                msg.style.animation = "fade-out 0.5s ease forwards";
-                setTimeout(() => {
-                    msg.style.display = 'none';
-                    msg.style.animation = "slide-up 0.3s ease-out forwards"; // reset
-                }, 500);
-            }, 3000);
+            let completedOrder = orders.splice(index, 1)[0];
+            completedOrder.completedAt = new Date().toLocaleString();
+            logs.push(completedOrder);
+            
+            localStorage.setItem('bluberryOrders', JSON.stringify(orders));
+            localStorage.setItem('bluberryOrderLogs', JSON.stringify(logs));
+            
+            loadOrders(); 
+            loadLogs(); 
+        }
+
+        // --- ARCHIVED LOGS LOGIC ---
+        function loadLogs() {
+            const logList = document.getElementById('log-list');
+            const logs = JSON.parse(localStorage.getItem('bluberryOrderLogs')) || [];
+            logList.innerHTML = '';
+
+            if(logs.length === 0) {
+                logList.innerHTML = '<div class="empty-inbox">No archived orders found.</div>';
+                return;
+            }
+
+            for (let i = logs.length - 1; i >= 0; i--) {
+                const order = logs[i];
+                let itemsHtml = '';
+                order.items.forEach(item => { itemsHtml += `<div class="order-item-row"><span>${item.amount}x ${item.name}</span><span>$${item.total}</span></div>`; });
+                const idClass = order.division === 'Ore' ? 'ore-type' : '';
+                const customerName = order.customer || "Guest User";
+
+                // Only show delete button if Master Admin is logged in
+                const deleteBtnHtml = currentRole === 'admin' ? `<button class="btn-action btn-delete" onclick="permanentlyDeleteLog(${i})">🗑 Delete Log</button>` : '';
+
+                logList.innerHTML += `
+                    <div class="order-card" style="border-color: #2ecc71;">
+                        <div class="order-header">
+                            <div>
+                                <div class="order-id ${idClass}">${order.id}</div>
+                                <div class="order-customer">👤 ${customerName}</div>
+                                <div class="order-date">Created: ${order.date}</div>
+                                <div class="completed-badge">✔ Completed: ${order.completedAt}</div>
+                            </div>
+                            <div class="btn-actions-container">
+                                <button class="btn-export" onclick="exportCSV('bluberryOrderLogs', ${i})">📥 Export .CSV</button>
+                                ${deleteBtnHtml}
+                            </div>
+                        </div>
+                        <div class="order-items">${itemsHtml}</div>
+                        <div class="order-total">Grand Total: $${order.total}</div>
+                    </div>
+                `;
+            }
+        }
+
+        function permanentlyDeleteLog(index) {
+            if(confirm("Are you sure you want to permanently delete this order record? This cannot be undone.")) {
+                let logs = JSON.parse(localStorage.getItem('bluberryOrderLogs')) || [];
+                logs.splice(index, 1);
+                localStorage.setItem('bluberryOrderLogs', JSON.stringify(logs));
+                loadLogs();
+            }
+        }
+
+        // --- DYNAMIC EXPORT FUNCTION ---
+        function exportCSV(storageKey, index) {
+            const list = JSON.parse(localStorage.getItem(storageKey)) || [];
+            const order = list[index];
+            if(!order) return;
+
+            let csvContent = "data:text/csv;charset=utf-8,";
+            csvContent += "Order ID,Customer Name,Division,Date Created,Date Completed,Item Name,Amount,Price,Row Total,Grand Total\n";
+
+            const safeCustomerName = (order.customer || "Guest").replace(/"/g, '""'); 
+            const completedDate = order.completedAt ? `"${order.completedAt}"` : "Pending";
+
+            order.items.forEach((item, idx) => {
+                let grandTotalCell = idx === 0 ? order.total : "";
+                csvContent += `${order.id},"${safeCustomerName}",${order.division},"${order.date}",${completedDate},${item.name},${item.amount},${item.price},${item.total},${grandTotalCell}\n`;
+            });
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `Bluberry_Order_${order.id}.csv`); 
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
         }
     </script>
 </body>

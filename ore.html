@@ -3,180 +3,246 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ore Division | Calculator</title>
+    <title>Ore Division | Premium Portal</title>
     <style>
-        /* --- ANIMATIONS --- */
-        @keyframes slide-in-down {
-            from { opacity: 0; transform: translateY(-20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes cyber-pulse {
-            0% { transform: scale(1); color: inherit; }
-            50% { transform: scale(1.1); color: #3498db; }
-            100% { transform: scale(1); color: inherit; }
-        }
+        /* --- GLOBAL STYLES --- */
+        body, html { margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: #0a0a0a; background-image: linear-gradient(135deg, #141414 0%, #050505 100%); background-attachment: fixed; color: #f0f0f0; overflow-x: hidden; scroll-behavior: smooth; }
+        @keyframes fade-in-up { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes ambient-glow { 0% { opacity: 0.3; transform: scale(1) translate(-2%, 0); } 50% { opacity: 0.7; transform: scale(1.15) translate(2%, 3%); } 100% { opacity: 0.3; transform: scale(1) translate(-2%, 0); } }
+        .ambient-spotlight { position: fixed; top: -20%; left: -10%; width: 120%; height: 100vh; background: radial-gradient(circle at 50% 30%, rgba(52, 152, 219, 0.35) 0%, transparent 60%); z-index: -1; pointer-events: none; animation: ambient-glow 10s ease-in-out infinite; }
+        
+        .header { position: fixed; top: 0; left: 0; width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 15px 50px; box-sizing: border-box; z-index: 1000; background: rgba(10, 10, 10, 0.4); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); transition: all 0.4s; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .header-logo { height: 70px; filter: drop-shadow(0px 4px 8px rgba(0,0,0,0.6)); transition: all 0.4s; position: relative; z-index: 1001; }
+        .hamburger { display: none; flex-direction: column; cursor: pointer; gap: 6px; z-index: 1002; }
+        .hamburger span { width: 30px; height: 3px; background-color: white; border-radius: 5px; transition: all 0.3s; box-shadow: 0 2px 5px rgba(0,0,0,0.5); }
+        .nav-menu { display: flex; gap: 25px; }
+        .nav-menu a { text-decoration: none; color: white; font-weight: bold; font-size: 1rem; text-shadow: 1px 1px 3px rgba(0,0,0,0.8); transition: color 0.3s ease; }
+        .nav-home:hover { color: #ff4d4d; } .nav-meat:hover { color: #ff4d4d; } .nav-ore:hover, .nav-ore.active { color: #3498db; } .nav-admin:hover { color: #9b59b6; }
+        .header.scrolled { padding: 10px 50px; background: rgba(5, 5, 5, 0.95); box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
+        .header.scrolled .header-logo { height: 45px; }
+        .progress-container { position: absolute; bottom: 0; left: 0; width: 100%; height: 2px; }
+        .progress-bar { height: 2px; background: #3498db; width: 0%; box-shadow: 0 0 10px #3498db; }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #ebedef;
-            color: #2c3e50;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 30px 15px;
-            margin: 0;
-            overflow-x: hidden;
-        }
-
-        .animated-container {
-            width: 100%;
-            max-width: 700px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            animation: slide-in-down 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-        }
-
+        .main-content { display: flex; flex-direction: column; align-items: center; padding: 130px 15px 50px 15px; min-height: 100vh; box-sizing: border-box; }
+        .animated-container { width: 100%; max-width: 750px; display: flex; flex-direction: column; align-items: center; animation: fade-in-up 0.7s forwards; }
         .header-container { text-align: center; margin-bottom: 30px; }
-        h1 { color: #2c3e50; margin: 0 0 5px 0; font-size: 2.5rem; text-transform: uppercase; letter-spacing: 2px; }
-        p.subtitle { color: #5d6d7e; margin: 0; font-size: 1.1rem; font-weight: 500; }
+        h1 { color: #ffffff; margin: 0 0 5px 0; font-size: 2.4rem; font-weight: 800; letter-spacing: 1px; text-shadow: 0 4px 10px rgba(0,0,0,0.5); }
+        p.subtitle { color: #5dade2; margin: 0; font-size: 1.1rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px; }
 
-        table {
-            background-color: white; border-collapse: collapse; width: 100%;
-            box-shadow: 0px 8px 16px rgba(44, 62, 80, 0.15); border-radius: 8px;
-            overflow: hidden; margin-bottom: 25px; border: 1px solid #d5d8dc;
-        }
-        th, td { padding: 12px 15px; text-align: center; border-bottom: 1px solid #eaeded; }
-        th { background-color: #2c3e50; color: #ecf0f1; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
-
-        /* Dashboard Slide Hover Effect */
-        tbody tr { transition: all 0.25s ease; border-left: 4px solid transparent; }
-        tbody tr:hover {
-            background-color: #f0f3f4;
-            transform: translateX(4px);
-            border-left: 4px solid #3498db;
-        }
-
-        td.amount-col { background-color: #f4f6f7; transition: background-color 0.2s; }
-        tbody tr:hover td.amount-col { background-color: transparent; }
-
-        input[type="number"] {
-            width: 70px; padding: 8px; text-align: center; border: 2px solid #bdc3c7;
-            border-radius: 4px; font-size: 1rem; transition: all 0.3s;
-            background-color: #fff; color: #2c3e50; font-weight: bold;
-        }
-        input[type="number"]:focus {
-            outline: none; border-color: #3498db; transform: scale(1.1);
-            box-shadow: 0 0 10px rgba(52, 152, 219, 0.4);
-        }
+        table { background-color: white; border-collapse: separate; border-spacing: 0; width: 100%; box-shadow: 0px 20px 40px rgba(0, 0, 0, 0.6); border-radius: 12px; margin-bottom: 35px; border: 1px solid #333; }
+        th, td { padding: 16px 20px; text-align: center; border-bottom: 1px solid #f0f0f0; color: #222; }
+        th { background-color: #2c3e50; color: white; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; font-size: 0.85rem; position: sticky; top: 65px; z-index: 20; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
+        th:first-child { border-top-left-radius: 12px; } th:last-child { border-top-right-radius: 12px; }
+        tbody tr { transition: background-color 0.2s ease; } tbody tr:hover { background-color: #ebf5fb; }
+        td.amount-col { background-color: #fafafa; } tbody tr:hover td.amount-col { background-color: transparent; }
+        input[type="number"] { width: 80px; padding: 10px; text-align: center; border: 1px solid #ccc; background-color: #fff; border-radius: 6px; font-size: 1rem; font-weight: 600; color: #333; transition: all 0.2s ease; }
+        input[type="number"]:focus { outline: none; border-color: #3498db; box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2); }
         input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+        .total-row { background-color: #1a1a1a; color: white; font-size: 1.2rem; } .total-row td { border: none; padding: 20px; color: white; }
+        .total-row td:first-child { border-bottom-left-radius: 12px; } .total-row td:last-child { border-bottom-right-radius: 12px; }
+        #grand-total { color: #3498db; font-size: 1.6rem; font-weight: 800; display: inline-block; }
 
-        .total-row { background-color: #17202a; color: white; font-size: 1.2rem; font-weight: bold; }
-        .total-row td { border: none; padding: 15px; }
-        #grand-total {
-            background-color: #fff; color: #2c3e50; font-size: 1.4rem;
-            display: inline-block; transition: all 0.2s;
-        }
-        .pulse-anim { animation: cyber-pulse 0.4s ease-out; }
+        /* BUTTONS */
+        .btn-group { display: flex; gap: 15px; width: 100%; justify-content: center; }
+        .btn { padding: 14px 28px; font-size: 1rem; font-weight: 800; border-radius: 8px; cursor: pointer; transition: all 0.2s ease; text-transform: uppercase; letter-spacing: 1px; }
+        .btn-clear { background-color: transparent; color: #e67e22; border: 2px solid #e67e22; }
+        .btn-clear:hover { background-color: #e67e22; color: white; transform: translateY(-2px); box-shadow: 0 6px 15px rgba(230, 126, 34, 0.3); }
+        .btn-submit { background-color: #2ecc71; color: #050505; border: none; box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3); }
+        .btn-submit:hover { background-color: #27ae60; transform: translateY(-2px); box-shadow: 0 8px 25px rgba(46, 204, 113, 0.5); }
 
-        .button-group { display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; }
-        .btn {
-            padding: 12px 25px; font-size: 1rem; font-weight: bold; border: none;
-            border-radius: 4px; cursor: pointer; transition: all 0.2s; text-decoration: none; text-transform: uppercase;
-        }
-        .btn-clear { background-color: #e67e22; color: white; box-shadow: 0 4px 6px rgba(230, 126, 34, 0.2); }
-        .btn-clear:hover { background-color: #d35400; transform: translateY(-2px); box-shadow: 0 6px 12px rgba(230, 126, 34, 0.3); }
-        .btn-clear:active { transform: translateY(1px); }
-        .btn-back { background-color: #7f8c8d; color: white; box-shadow: 0 4px 6px rgba(127, 140, 141, 0.2); }
-        .btn-back:hover { background-color: #34495e; transform: translateY(-2px); }
+        /* MODAL POPUP */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); z-index: 2000; display: none; justify-content: center; align-items: center; }
+        .modal-box { background: #1a1a1a; border: 1px solid #333; padding: 40px; border-radius: 16px; text-align: center; width: 100%; max-width: 400px; box-shadow: 0 20px 50px rgba(0,0,0,0.8); animation: fade-in-up 0.4s ease-out; box-sizing: border-box; }
+        .name-input { width: 100%; box-sizing: border-box; padding: 15px; margin: 20px 0; border-radius: 8px; border: 1px solid #444; background: #050505; color: white; font-size: 1.1rem; text-align: center; outline: none; transition: 0.3s; }
+        .name-input:focus { border-color: #3498db; box-shadow: 0 0 10px rgba(52, 152, 219, 0.3); }
+        
+        /* COPY ID STYLES */
+        .order-id-display { font-size: 2.2rem; color: #3498db; font-weight: 900; letter-spacing: 2px; margin: 20px 0; background: #000; padding: 15px; border-radius: 8px; border: 1px dashed #555; cursor: pointer; transition: all 0.2s; }
+        .order-id-display:hover { background: #111; border-color: #3498db; transform: scale(1.02); }
+        
+        .discord-btn { background: #5865F2; color: white; text-decoration: none; padding: 12px 25px; border-radius: 6px; font-weight: bold; display: inline-flex; align-items: center; gap: 10px; transition: all 0.2s; margin-top: 20px; }
+        .discord-btn:hover { background: #4752C4; }
+        .close-modal { color: #888; text-decoration: underline; cursor: pointer; display: block; margin-top: 20px; font-size: 0.9rem; }
 
-        @media (max-width: 500px) {
-            h1 { font-size: 2rem; } th, td { padding: 10px 5px; font-size: 0.9rem; } input[type="number"] { width: 50px; }
+        @media (max-width: 900px) {
+            .header { padding: 15px 25px; } .header-logo { height: 60px; } .header.scrolled { padding: 10px 25px; } .header.scrolled .header-logo { height: 40px; }
+            .hamburger { display: flex; } .nav-menu { position: fixed; top: 0; right: -100%; width: 280px; height: 100vh; background-color: rgba(15, 15, 15, 0.95); backdrop-filter: blur(20px); flex-direction: column; justify-content: center; align-items: center; gap: 40px; transition: right 0.4s; z-index: 1000; } .nav-menu a { font-size: 1.5rem; } .nav-menu.active { right: 0; }
+            .hamburger.active span:nth-child(1) { transform: translateY(9px) rotate(45deg); } .hamburger.active span:nth-child(2) { opacity: 0; } .hamburger.active span:nth-child(3) { transform: translateY(-9px) rotate(-45deg); } th { top: 60px; } 
         }
+        @media (max-width: 500px) { h1 { font-size: 1.8rem; } p.subtitle { font-size: 0.9rem; } table { margin-bottom: 25px; } th, td { padding: 10px 4px; font-size: 0.8rem; } th { font-size: 0.75rem; letter-spacing: 0; } input[type="number"] { width: 45px; padding: 6px 2px; font-size: 0.85rem; border-radius: 4px; } .total-row { font-size: 0.95rem; } .total-row td { padding: 15px 5px; } #grand-total { font-size: 1.2rem; } .btn { padding: 12px 20px; font-size: 0.9rem; } .btn-group { flex-direction: column; } .modal-box { padding: 30px 20px; } .order-id-display { font-size: 1.6rem; } }
     </style>
 </head>
 <body>
+    <div class="ambient-spotlight"></div>
 
-    <div class="animated-container">
-        <div class="header-container">
-            <img src="logo.jpg" alt="Bluberry Logo" style="height: 100px; margin-bottom: 10px; filter: drop-shadow(0px 4px 6px rgba(0,0,0,0.1));">
-            <h1>Industrial Ore</h1>
-            <p class="subtitle">Mining & Extraction Calculation System</p>
+    <header class="header" id="main-header">
+        <img src="logo.jpg" alt="Bluberry Logo" class="header-logo">
+        <div class="hamburger" id="hamburger"><span></span><span></span><span></span></div>
+        <nav class="nav-menu" id="nav-menu">
+            <a href="index.html" class="nav-home">Home</a>
+            <a href="meat.html" class="nav-meat">Meat Division</a>
+            <a href="ore.html" class="nav-ore active">Ore Division</a>
+            <a href="admin.html" class="nav-admin">Admin Panel</a>
+        </nav>
+        <div class="progress-container"><div class="progress-bar" id="scroll-bar"></div></div>
+    </header>
+
+    <div class="main-content">
+        <div class="animated-container">
+            <div class="header-container">
+                <h1>Industrial Ore</h1>
+                <p class="subtitle">Mining & Extraction Calculation System</p>
+            </div>
+
+            <table>
+                <thead><tr><th>Ore Name</th><th>Price</th><th>Yield Amount</th><th>Row Total</th></tr></thead>
+                <tbody id="bill-body"></tbody>
+                <tfoot>
+                    <tr class="total-row"><td colspan="3" style="text-align: right; font-weight: 600;">GRAND TOTAL</td><td style="background-color: #fff;"><span id="grand-total">0</span></td></tr>
+                </tfoot>
+            </table>
+
+            <div class="btn-group">
+                <button class="btn btn-clear" onclick="resetCalculator()">Clear Yields</button>
+                <button class="btn btn-submit" onclick="startOrderProcess()">Submit Order</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="order-modal">
+        
+        <div class="modal-box" id="step-1-name">
+            <h2 style="margin-top: 0; color: #fff;">Consignment Details</h2>
+            <p style="color: #aaa; margin-bottom: 5px;">Please enter your name or company to register this extraction order.</p>
+            <input type="text" id="customer-name" class="name-input" placeholder="e.g. Danny Jadogar">
+            <button class="btn btn-submit" style="width: 100%; margin-top: 10px;" onclick="finalizeOrder()">Confirm & Generate ID</button>
+            <span class="close-modal" onclick="closeModal()">Cancel</span>
         </div>
 
-        <table>
-            <thead>
-                <tr>
-                    <th>Ore Name</th> <th>Price</th> <th>Amount</th> <th>Row Total</th>
-                </tr>
-            </thead>
-            <tbody id="bill-body">
-                </tbody>
-            <tfoot>
-                <tr class="total-row">
-                    <td colspan="3" style="text-align: right;">GRAND TOTAL</td>
-                    <td style="background-color: white;"><span id="grand-total">0</span></td>
-                </tr>
-            </tfoot>
-        </table>
-
-        <div class="button-group">
-            <a href="index.html" class="btn btn-back">← Back to Home</a>
-            <button class="btn btn-clear" onclick="resetCalculator()">Clear Yields</button>
+        <div class="modal-box" id="step-2-success" style="display: none;">
+            <h2 style="margin-top: 0; color: #2ecc71;">Order Saved!</h2>
+            <p style="color: #aaa; margin-bottom: 5px;">Thank you, <b id="display-name" style="color: #fff;"></b>. Your Tracking ID is:</p>
+            
+            <div class="order-id-display" id="display-order-id" onclick="copyOrderId(this)" title="Click to copy ID">ORD-XXXXXX</div>
+            
+            <p style="color: #ddd; font-size: 0.9rem;">Please send this ID to our logistics team on Discord to process your shipment.</p>
+            
+            <a href="https://discord.gg/h8pzvKahwr" target="_blank" class="discord-btn">
+                <span style="font-size: 1.2rem;">💬</span> Message Discord
+            </a>
+            <span class="close-modal" onclick="closeModalFinal()">Close & Return</span>
         </div>
     </div>
 
     <script>
+        // Menu & Scroll Logic
+        const hamburger = document.getElementById('hamburger'); const navMenu = document.getElementById('nav-menu');
+        hamburger.addEventListener('click', () => { hamburger.classList.toggle('active'); navMenu.classList.toggle('active'); });
+        window.addEventListener('scroll', function() {
+            const header = document.getElementById('main-header'); const scrollBar = document.getElementById('scroll-bar');
+            if (window.scrollY > 50) header.classList.add('scrolled'); else header.classList.remove('scrolled');
+            let winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            let height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            scrollBar.style.width = ((winScroll / height) * 100) + "%";
+        });
+
+        // Data & Calculation Logic
         const defaultOreData = [
             { name: "Coal", price: 425 }, { name: "Iron", price: 1280 }, 
             { name: "Gold", price: 5240 }, { name: "Diamond", price: 20000 }
         ];
 
-        // Link to Admin Panel data
         const oreData = JSON.parse(localStorage.getItem('orePrices')) || defaultOreData;
         const tbody = document.getElementById('bill-body');
 
         function calculateTotals() {
             let grandTotal = 0;
-            const rows = tbody.querySelectorAll('tr');
-            
-            rows.forEach((row, index) => {
-                const price = oreData[index].price;
-                const amountInput = row.querySelector('.amount-input');
-                const amount = parseInt(amountInput.value) || 0; 
-                const rowTotal = price * amount;
-                
+            tbody.querySelectorAll('tr').forEach((row, index) => {
+                const amount = parseInt(row.querySelector('.amount-input').value) || 0;
+                const rowTotal = oreData[index].price * amount;
                 row.querySelector('.row-total').textContent = rowTotal;
                 grandTotal += rowTotal;
             });
-            
-            const gtElement = document.getElementById('grand-total');
-            if(gtElement.textContent != grandTotal) {
-                gtElement.textContent = grandTotal;
-                // Trigger the pulse animation
-                gtElement.classList.remove('pulse-anim');
-                void gtElement.offsetWidth; // forces reflow
-                gtElement.classList.add('pulse-anim');
-            }
+            document.getElementById('grand-total').textContent = grandTotal;
         }
 
-        function resetCalculator() {
-            document.querySelectorAll('.amount-input').forEach(input => input.value = ''); 
-            calculateTotals(); 
-        }
+        function resetCalculator() { document.querySelectorAll('.amount-input').forEach(input => input.value = ''); calculateTotals(); }
 
         oreData.forEach((item) => {
             const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td style="font-weight: 600; color: #2c3e50;">${item.name}</td>
-                <td>${item.price}</td>
-                <td class="amount-col">
-                    <input type="number" class="amount-input" min="0" placeholder="0" oninput="calculateTotals()">
-                </td>
-                <td class="row-total" style="font-weight: 600; color: #7f8c8d;">0</td>
-            `;
+            tr.innerHTML = `<td style="font-weight: 600; color: #2c3e50;">${item.name}</td><td style="color: #666;">${item.price}</td><td class="amount-col"><input type="number" class="amount-input" min="0" placeholder="0" oninput="calculateTotals()"></td><td class="row-total" style="font-weight: 700; color: #222;">0</td>`;
             tbody.appendChild(tr);
         });
+
+        // --- MULTI-STEP ORDER SUBMISSION LOGIC ---
+        let pendingItems = [];
+        let pendingTotal = 0;
+
+        function startOrderProcess() {
+            pendingItems = [];
+            pendingTotal = 0;
+            tbody.querySelectorAll('tr').forEach((row, index) => {
+                const amount = parseInt(row.querySelector('.amount-input').value) || 0;
+                if (amount > 0) {
+                    const price = oreData[index].price;
+                    pendingItems.push({ name: oreData[index].name, price: price, amount: amount, total: price * amount });
+                    pendingTotal += (price * amount);
+                }
+            });
+
+            if (pendingItems.length === 0) { alert("Please add at least one item to your extraction order before submitting."); return; }
+
+            document.getElementById('customer-name').value = ""; 
+            document.getElementById('step-1-name').style.display = 'block';
+            document.getElementById('step-2-success').style.display = 'none';
+            document.getElementById('order-modal').style.display = 'flex';
+            document.getElementById('customer-name').focus();
+        }
+
+        function finalizeOrder() {
+            let customerName = document.getElementById('customer-name').value.trim();
+            if (customerName === "") customerName = "Guest User";
+
+            const orderId = 'ORD-O-' + Math.random().toString(36).substr(2, 6).toUpperCase();
+            
+            const newOrder = {
+                id: orderId, customer: customerName, division: "Ore",
+                date: new Date().toLocaleString(), items: pendingItems, total: pendingTotal
+            };
+
+            let existingOrders = JSON.parse(localStorage.getItem('bluberryOrders')) || [];
+            existingOrders.push(newOrder);
+            localStorage.setItem('bluberryOrders', JSON.stringify(existingOrders));
+
+            document.getElementById('display-name').textContent = customerName;
+            
+            const idDisplay = document.getElementById('display-order-id');
+            idDisplay.textContent = orderId;
+            idDisplay.setAttribute('data-id', orderId);
+
+            document.getElementById('step-1-name').style.display = 'none';
+            document.getElementById('step-2-success').style.display = 'block';
+        }
+
+        // --- COPY TO CLIPBOARD FUNCTION ---
+        function copyOrderId(element) {
+            const realId = element.getAttribute('data-id') || element.innerText;
+            if(realId === "Copied! ✔") return;
+            
+            navigator.clipboard.writeText(realId).then(() => {
+                element.innerText = "Copied! ✔";
+                element.style.color = "#2ecc71"; // Turn green temporarily
+                setTimeout(() => { 
+                    element.innerText = realId; 
+                    element.style.color = "#3498db"; // Return to original cyan
+                }, 1500);
+            }).catch(err => {
+                console.error("Failed to copy text: ", err);
+            });
+        }
+
+        function closeModal() { document.getElementById('order-modal').style.display = 'none'; }
+        function closeModalFinal() { closeModal(); resetCalculator(); }
     </script>
 </body>
 </html>

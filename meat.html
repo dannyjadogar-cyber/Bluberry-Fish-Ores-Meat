@@ -91,7 +91,7 @@
         <div class="animated-container">
             <div class="header-container">
                 <h1>Premium Meat</h1>
-                <p class="subtitle">Order Submission System</p>
+                <p class="subtitle">Selling Submission System</p>
             </div>
 
             <table>
@@ -104,7 +104,7 @@
 
             <div class="btn-group">
                 <button class="btn btn-clear" onclick="resetCalculator()">Clear Items</button>
-                <button class="btn btn-submit" onclick="startOrderProcess()">Submit Order</button>
+                <button class="btn btn-submit" onclick="startOrderProcess()">SUBMIT</button>
             </div>
         </div>
     </div>
@@ -121,14 +121,14 @@
 
         <div class="modal-box" id="step-2-success" style="display: none;">
             <h2 style="margin-top: 0; color: #2ecc71;">Order Saved!</h2>
-            <p style="color: #aaa; margin-bottom: 5px;">Thank you, <b id="display-name" style="color: #fff;"></b>. Your Tracking ID is:</p>
+            <p style="color: #aaa; margin-bottom: 5px;">Thank you, <b id="display-name" style="color: #fff;"></b>. Your Order ID is:</p>
             
             <div class="order-id-display" id="display-order-id" onclick="copyOrderId(this)" title="Click to copy ID">ORD-XXXXXX</div>
             
-            <p style="color: #ddd; font-size: 0.9rem;">Please send this ID to our logistics team on Discord to process your shipment.</p>
+            <p style="color: #ddd; font-size: 0.9rem;">Please make support ticket and send this ID to our staff team on Discord to process your deal.</p>
             
-            <a href="https://discord.gg/h8pzvKahwr" target="_blank" class="discord-btn">
-                <span style="font-size: 1.2rem;">💬</span> Message Discord
+            <a href="https://discord.gg/bWeCXpdZwU" target="_blank" class="discord-btn">
+                <span style="font-size: 1.2rem;">💬</span> Discord Ticket
             </a>
             <span class="close-modal" onclick="closeModalFinal()">Close & Return</span>
         </div>
@@ -247,4 +247,5 @@
         function closeModalFinal() { closeModal(); resetCalculator(); }
     </script>
 </body>
+
 </html>

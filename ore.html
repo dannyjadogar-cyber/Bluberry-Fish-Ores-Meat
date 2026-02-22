@@ -81,8 +81,8 @@
         <div class="hamburger" id="hamburger"><span></span><span></span><span></span></div>
         <nav class="nav-menu" id="nav-menu">
             <a href="index.html" class="nav-home">Home</a>
-            <a href="meat.html" class="nav-meat">Meat Division</a>
-            <a href="ore.html" class="nav-ore active">Ore Division</a>
+            <a href="meat.html" class="nav-meat active">Sell Fish/Meat</a>
+            <a href="ore.html" class="nav-ore">Sell Ore</a>
             <a href="admin.html" class="nav-admin">Admin Panel</a>
         </nav>
         <div class="progress-container"><div class="progress-bar" id="scroll-bar"></div></div>
@@ -92,11 +92,11 @@
         <div class="animated-container">
             <div class="header-container">
                 <h1>Industrial Ore</h1>
-                <p class="subtitle">Mining & Extraction Calculation System</p>
+                <p class="subtitle">Mining & Extraction Vendor System</p>
             </div>
 
             <table>
-                <thead><tr><th>Ore Name</th><th>Price</th><th>Yield Amount</th><th>Row Total</th></tr></thead>
+                <thead><tr><th>Ore Name</th><th>Our Buying Price</th><th>Yield to Sell</th><th>Row Payout</th></tr></thead>
                 <tbody id="bill-body"></tbody>
                 <tfoot>
                     <tr class="total-row"><td colspan="3" style="text-align: right; font-weight: 600;">GRAND TOTAL</td><td style="background-color: #fff;"><span id="grand-total">0</span></td></tr>
@@ -105,7 +105,7 @@
 
             <div class="btn-group">
                 <button class="btn btn-clear" onclick="resetCalculator()">Clear Yields</button>
-                <button class="btn btn-submit" onclick="startOrderProcess()">SUBMIT</button>
+                <button class="btn btn-submit" onclick="startOrderProcess()">Submit Sale</button>
             </div>
         </div>
     </div>
@@ -113,8 +113,8 @@
     <div class="modal-overlay" id="order-modal">
         
         <div class="modal-box" id="step-1-name">
-            <h2 style="margin-top: 0; color: #fff;">Consignment Details</h2>
-            <p style="color: #aaa; margin-bottom: 5px;">Please enter your name or company to register this extraction order.</p>
+            <h2 style="margin-top: 0; color: #fff;">Sale Details</h2>
+            <p style="color: #aaa; margin-bottom: 5px;">Please enter your name or company to register this extraction sale.</p>
             <input type="text" id="customer-name" class="name-input" placeholder="e.g. Danny Jadogar">
             <button class="btn btn-submit" style="width: 100%; margin-top: 10px;" onclick="finalizeOrder()">Confirm & Generate ID</button>
             <span class="close-modal" onclick="closeModal()">Cancel</span>
@@ -126,7 +126,7 @@
             
             <div class="order-id-display" id="display-order-id" onclick="copyOrderId(this)" title="Click to copy ID">ORD-XXXXXX</div>
             
-            <p style="color: #ddd; font-size: 0.9rem;">Please make support ticket and send this ID to our staff team on Discord to process your deal.</p>
+            <p style="color: #ddd; font-size: 0.9rem;">Please send this ID to our Staff team on Discord to coordinate your drop-off and payment.</p>
             
             <a href="https://discord.gg/bWeCXpdZwU" target="_blank" class="discord-btn">
                 <span style="font-size: 1.2rem;">💬</span> Discord Ticket
@@ -248,4 +248,5 @@
 </body>
 
 </html>
+
 

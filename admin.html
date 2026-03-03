@@ -202,8 +202,8 @@
         function goBackToRoles() { document.getElementById('login-screen').style.display = 'none'; document.getElementById('role-screen').style.display = 'block'; currentRole = ''; }
         function checkPassword() {
             const passInput = document.getElementById('passInput'); const errorMsg = document.getElementById('error-msg'); let isValid = false;
-            if (currentRole === 'staff' && passInput.value === 'staff123') isValid = true;
-            if (currentRole === 'admin' && passInput.value === 'admin123') isValid = true;
+            if (currentRole === 'staff' && passInput.value === 'BB-vstaff') isValid = true;
+            if (currentRole === 'admin' && passInput.value === 'BB-vrgrp') isValid = true;
 
             if (isValid) {
                 document.getElementById('login-screen').style.display = 'none'; const dash = document.getElementById('admin-dashboard'); dash.style.display = 'flex'; dash.style.animation = "slide-up 0.8s forwards";
@@ -394,3 +394,4 @@
     </script>
 </body>
 </html>
+

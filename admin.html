@@ -165,7 +165,10 @@
             </div>
 
             <div id="logs-tab" class="tab-content glass-panel" style="padding: 30px; width: 100%; box-sizing: border-box; align-items: flex-start;">
-                <h2 style="margin: 0 0 20px 0; border-bottom: 1px solid #333; padding-bottom: 15px; width: 100%;">Archived Purchase History</h2>
+                <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; margin-bottom: 20px; border-bottom: 1px solid #333; padding-bottom: 15px;">
+                    <h2 style="margin: 0;">Archived Purchase History</h2>
+                    <button class="btn-export" style="background: #2ecc71; color: #000;" onclick="exportAllLogs()">📊 Export All Logs (CSV)</button>
+                </div>
                 <div id="log-list" style="width: 100%;"></div>
             </div>
         </div>
@@ -328,6 +331,7 @@
                             <div class="btn-actions-container">
                                 <button class="btn-export" onclick="exportCSV('active', '${key}')">📥 Export .CSV</button>
                                 <button class="btn-action btn-complete" onclick="completeOrder('${key}')">✔ Mark Received & Paid</button>
+                                <button class="btn-action btn-delete" onclick="deleteActiveOrder('${key}')">🗑 Delete Order</button>
                             </div>
                         </div>
                         <div class="order-items">${itemsHtml}</div>
@@ -341,6 +345,12 @@
             const order = activeOrdersData[orderKey];
             order.completedAt = new Date().toLocaleString();
             db.ref('orders/logs/' + orderKey).set(order).then(() => { db.ref('orders/active/' + orderKey).remove(); });
+        }
+
+        function deleteActiveOrder(orderKey) {
+            if(confirm("Are you sure you want to delete this incoming sale? This will remove it from the dashboard.")) {
+                db.ref('orders/active/' + orderKey).remove();
+            }
         }
 
         let logsData = {};
@@ -358,7 +368,7 @@
                 const order = data[key]; let itemsHtml = '';
                 order.items.forEach(item => { itemsHtml += `<div class="order-item-row"><span>${item.amount}x ${item.name}</span><span>$${item.total}</span></div>`; });
                 const idClass = order.division === 'Ore' ? 'ore-type' : ''; const customerName = order.customer || "Guest Vendor";
-                const deleteBtnHtml = currentRole === 'admin' ? `<button class="btn-action btn-delete" onclick="permanentlyDeleteLog('${key}')">🗑 Delete Log</button>` : '';
+                const deleteBtnHtml = `<button class="btn-action btn-delete" onclick="permanentlyDeleteLog('${key}')">🗑 Delete Log</button>`;
 
                 logList.innerHTML += `
                     <div class="order-card" style="border-color: #2ecc71;">
@@ -401,6 +411,30 @@
 
             const encodedUri = encodeURI(csvContent); const link = document.createElement("a"); link.setAttribute("href", encodedUri);
             link.setAttribute("download", `Bluberry_Purchase_${order.id}.csv`); 
+            document.body.appendChild(link); link.click(); document.body.removeChild(link);
+        }
+
+        function exportAllLogs() {
+            const keys = Object.keys(logsData);
+            if(keys.length === 0) { alert("No logs found to export!"); return; }
+
+            let csvContent = "data:text/csv;charset=utf-8,";
+            csvContent += "Consignment ID,Supplier Name,Division,Date Registered,Date Received,Item Name,Amount,Buying Price,Row Total,Total Payout\n";
+
+            // Sort logs by date (newest first)
+            keys.reverse().forEach(key => {
+                const order = logsData[key];
+                const safeCustomerName = (order.customer || "Guest").replace(/"/g, '""');
+                const completedDate = order.completedAt ? `"${order.completedAt}"` : "N/A";
+
+                order.items.forEach((item, idx) => {
+                    let grandTotalCell = idx === 0 ? order.total : "";
+                    csvContent += `${order.id},"${safeCustomerName}",${order.division},"${order.date}",${completedDate},${item.name},${item.amount},${item.price},${item.total},${grandTotalCell}\n`;
+                });
+            });
+
+            const encodedUri = encodeURI(csvContent); const link = document.createElement("a"); link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `Bluberry_Whole_History_${new Date().toLocaleDateString().replace(/\//g, '-')}.csv`); 
             document.body.appendChild(link); link.click(); document.body.removeChild(link);
         }
     </script>
